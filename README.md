@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="350" alt="offerlogo" src="https://user-images.githubusercontent.com/55920132/146873000-a3b69146-f06b-44aa-828e-75e36f7a2463.png">
+<img width="350" alt="offerlogo" src="https://user-images.githubusercontent.com/55920132/179387953-19bd7afd-095b-4a0b-bf42-9eb76daf2407.png">
 
 ### 구매자가 가격을 제안하는 신개념 중고거래 플랫폼 OFFER!
   
@@ -115,7 +115,7 @@
 Clone this repository, build with gradle and start the application
 
 ```
-git clone git@github.com:prgrms-web-devcourse/Team_Price_Offer_BE.git
+git clone git@github.com:offer-fe/offer-be.git
 cd Team_Price_Offer_BE
 sudo chmod 777 ./gradlew
 ./gradlew build
