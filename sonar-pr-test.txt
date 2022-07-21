@@ -1,0 +1,1 @@
+PR시 소나큐브 Automatic Analysis 연동 테스트
