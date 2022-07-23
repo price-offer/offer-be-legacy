@@ -4,6 +4,8 @@
 
 ### 구매자가 가격을 제안하는 신개념 중고거래 플랫폼 OFFER!
   
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=coverage)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
   
 </div>
 
