@@ -2,6 +2,9 @@ plugins {
     id "io.spring.dependency-management" version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.5.6'
     id 'java'
+
+    id 'jacoco'
+    id "org.sonarqube" version "3.3"
 }
 
 group = 'com.prgrms'
@@ -19,8 +22,6 @@ repositories {
 }
 
 dependencies {
-
-
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -54,8 +55,19 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api:1.3.5"
 }
 
+sonarqube {
+    properties {
+        property "sonar.projectKey", "price-offer_offer-be"
+        property "sonar.organization", "price-offer-sonar-cloud-key"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property 'sonar.coverage.jacoco.xmlReportPaths', "$buildDir/reports/test/jacocoTestReport.xml"
+        property "sonar.core.codeCoveragePlugin", "jacoco"
+    }
+}
+
 test {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 // querydsl 적용
@@ -70,4 +82,85 @@ tasks.withType(JavaCompile) {
 
 clean.doLast {
     file(generated).deleteDir()
+}
+
+// Jacoco 플러그인 설정
+jacoco {
+    toolVersion = '0.8.7'
+    // reportsDir = ${project.reporting.baseDir}/jacoco - 따로 설정해 주지 않을 경우 기본 경로
+}
+
+// jacocoTestReport 설정
+jacocoTestReport {
+    reports {
+        html.enabled true // 로컬에서 확인용으로 html 리포트 파일 생성
+        html.destination file("$buildDir/reports/test/jacocoTestReport.html")
+
+        xml.enabled true  // SonarCloud로 전송하기 위해 XML 리포트 생성
+        xml.destination file("$buildDir/reports/test/jacocoTestReport.xml")
+
+        csv.enabled false // csv는 생성하지 않음
+    }
+
+    def Qdomains = []
+    for (qPattern in '**/QA'..'**/QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application*',
+                            '**/*Request*',
+                            '**/*Response*',
+                            '**/*OAuthClient*',
+                            '**/*Interceptor*',
+                            '**/*Exception*',
+                    ] + Qdomains)
+                })
+        )
+    }
+
+    // 코드 커버리지 기준을 만족해야지 build 성공
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+//  jacocoTestCoverageVerification 설정
+jacocoTestCoverageVerification {
+    def Qdomains = []
+    for (qPattern in '*.QA'..'*.QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+
+    violationRules {
+        rule {
+            enabled = true // 이 rule을 적용할 것이다.
+            element = 'CLASS' // class 단위로
+
+            // 브랜치 커버리지 최소 50%
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            // 라인 커버리지 최소한 80%
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            // 커버리지 체크를 제외할 클래스들
+            excludes = [
+                    '**.*Application*',
+                    '**.*Request*',
+                    '**.*Response*',
+                    '**.*OAuthClient*',
+                    '**.*Interceptor*',
+                    '**.*Exception*',
+            ] + Qdomains
+        }
+    }
 }
