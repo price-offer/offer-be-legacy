@@ -1,13 +1,13 @@
-name: Build
+name: Sonar Cloud
 on:
   push:
-    branches:
-      - main
+    branches: [main, dev]
   pull_request:
     types: [opened, synchronize, reopened]
+    
 jobs:
   build:
-    name: Build
+    name: Sonar Analyze
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
