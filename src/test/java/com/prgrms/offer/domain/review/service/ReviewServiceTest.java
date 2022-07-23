@@ -9,6 +9,7 @@ import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.model.dto.ReviewResponse;
 import com.prgrms.offer.domain.review.model.entity.Review;
+import com.prgrms.offer.domain.review.model.value.OfferLevel;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -24,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -56,7 +60,7 @@ class ReviewServiceTest {
     Article article;
 
     @Mock
-    Member reviewer;
+    Member member;
 
     @Mock
     Review review;
@@ -69,7 +73,7 @@ class ReviewServiceTest {
     void findByArticleIdAndReviewerAuthSuccessTest() {
         // given
         given(articleRepository.findById(anyLong())).willReturn(Optional.of(article));
-        given(memberRepository.findByPrincipal(any())).willReturn(Optional.of(reviewer));
+        given(memberRepository.findByPrincipal(any())).willReturn(Optional.of(member));
         given(reviewRepository.findByReviewerAndArticle(any(), any())).willReturn(Optional.of(review));
         given(converter.toReviewResponse(any(), any())).willReturn(reviewResponse);
 
@@ -81,5 +85,21 @@ class ReviewServiceTest {
         then(memberRepository).should(BDDMockito.atLeast(1)).findByPrincipal(any());
         then(reviewRepository).should(BDDMockito.atLeast(1)).findByReviewerAndArticle(any(), any());
         then(converter).should(BDDMockito.atLeast(1)).toReviewResponse(any(), any());
+    }
+
+    @Test
+    @DisplayName(value = "임시 작성")
+    void updateOfferScoreSuccessTest() {
+        // given
+        given(member.evaluateScore(1)).willReturn(1);
+        OfferLevel offerLevel = OfferLevel.LEVEL1;
+        BDDMockito.doNothing().doNothing().when(member).chageOfferLevel(1);
+
+        // when
+        reviewService.updateOfferScore(member, 1);
+
+        // then
+        then(member).should(BDDMockito.atLeast(1)).evaluateScore(1);
+        then(member).should(BDDMockito.atLeast(0)).chageOfferLevel(1);
     }
 }

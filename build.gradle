@@ -60,7 +60,7 @@ sonarqube {
         property "sonar.projectKey", "price-offer_offer-be"
         property "sonar.organization", "price-offer-sonar-cloud-key"
         property "sonar.host.url", "https://sonarcloud.io"
-//        property 'sonar.coverage.jacoco.xmlReportPaths', "$buildDir/reports/test/jacocoTestReport.xml"
+        property 'sonar.coverage.jacoco.xmlReportPaths', "$buildDir/jacoco.xml"
     }
 }
 
@@ -96,7 +96,7 @@ jacocoTestReport {
 //        html.destination file("$buildDir/reports/test/jacocoTestReport.html")
 
         xml.enabled true  // SonarCloud로 전송하기 위해 XML 리포트 생성
-//        xml.destination file("$buildDir/reports/test/jacocoTestReport.xml")
+        xml.destination file("$buildDir/jacoco.xml")
 
         csv.enabled false // csv는 생성하지 않음
     }
@@ -135,14 +135,14 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             enabled = true // 이 rule을 적용할 것이다.
-            element = 'CLASS' // class 단위로
+            element = 'BUNDLE' // BUNDLE 단위로
 
-            // TODO: 브랜치 커버리지 최소 50%
-            limit {
-                counter = 'BRANCH'
-                value = 'COVEREDRATIO'
-                minimum = 0.00
-            }
+//            // TODO: 브랜치 커버리지 최소 50%
+//            limit {
+//                counter = 'BRANCH'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.00
+//            }
 
             // TODO: 라인 커버리지 최소한 80%
             limit {
