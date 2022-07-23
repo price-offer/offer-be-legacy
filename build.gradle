@@ -138,14 +138,14 @@ jacocoTestCoverageVerification {
             enabled = true // 이 rule을 적용할 것이다.
             element = 'CLASS' // class 단위로
 
-            // 브랜치 커버리지 최소 50%
+            // TODO: 브랜치 커버리지 최소 50%
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
                 minimum = 0.00
             }
 
-            // 라인 커버리지 최소한 80%
+            // TODO: 라인 커버리지 최소한 80%
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
