@@ -32,6 +32,7 @@ public class Article {
     private Member writer;
 
     @Column
+    @Builder.Default
     private Integer likeCount = 0;
 
     @Column
@@ -117,8 +118,8 @@ public class Article {
         modifiedDate = LocalDateTime.now();
     }
 
-    public boolean validateWriterByPrincipal(String principal){
-        return this.writer.getPrincipal().equals(principal) ? true : false;
+    public boolean validateWriterByPrincipal(Long id){
+        return this.writer.getId() == id ? true : false;
     }
 
     public boolean validateWriterByWriterId(Long writerId){

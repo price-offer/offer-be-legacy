@@ -1,8 +1,8 @@
 package com.prgrms.offer.domain.article.service;
 
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.article.model.dto.LikeArticleStatusResponse;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.model.entity.LikeArticle;
@@ -25,9 +25,8 @@ public class LikeArticleService {
     private final ArticleRepository articleRepository;
 
     @Transactional
-    public LikeArticleStatusResponse switchLikeStatus(Long articleId, JwtAuthentication authentication){
-        Member member = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    public LikeArticleStatusResponse switchLikeStatus(Long articleId, LoginMember loginMember){
+        Member member = memberRepository.getById(loginMember.getId());
 
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));

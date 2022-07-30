@@ -11,8 +11,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByPrincipal(String principal);
 
-    @Query("select m from Member m where m.provider = :provider and m.providerId = :providerId")
-    Optional<Member> findByProviderAndProviderId(String provider, String providerId);
+    Optional<Member> findById(Long id);
 
-    Optional<Member> findByProviderId(String providerId);
+    default Member getById(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    }
 }

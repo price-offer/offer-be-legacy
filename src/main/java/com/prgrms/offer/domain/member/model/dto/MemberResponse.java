@@ -11,7 +11,6 @@ public class MemberResponse {
     @Getter
     public static class MemberDto {
         private final Long id;
-        private final String token;
         private final String email;
         private final int offerLevel;
         private final String nickname;
@@ -19,9 +18,8 @@ public class MemberResponse {
         private final String address;
 
         @Builder
-        public MemberDto(Long id, String token, String email, int offerLevel, String nickname, String profileImageUrl, String address) {
+        public MemberDto(Long id, String email, int offerLevel, String nickname, String profileImageUrl, String address) {
             this.id = id;
-            this.token = token;
             this.email = email;
             this.offerLevel = offerLevel;
             this.nickname = nickname;
@@ -33,7 +31,6 @@ public class MemberResponse {
         public String toString() {
             return "MemberDto{" +
                     "id=" + id +
-                    ", token='" + token + '\'' +
                     ", email='" + email + '\'' +
                     ", offerLevel=" + offerLevel +
                     ", nickname='" + nickname + '\'' +

@@ -1,11 +1,12 @@
 package com.prgrms.offer.domain.offer.controller;
 
+import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
+import com.prgrms.offer.authentication.presentation.LoginMember;
+import com.prgrms.offer.authentication.aop.MemberOnly;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.common.page.PageDto;
 import com.prgrms.offer.common.page.PageInfo;
-import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.offer.model.dto.OfferBriefResponse;
 import com.prgrms.offer.domain.offer.model.dto.OfferCreateRequest;
 import com.prgrms.offer.domain.offer.model.dto.OfferResponse;
@@ -19,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,15 +34,13 @@ public class OfferController {
 
     @ApiOperation("가격 제안하기")
     @PostMapping(value = "/articles/{articleId}/offers", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @MemberOnly
     public ResponseEntity<ApiResponse> offer(
             @PathVariable Long articleId,
             @Valid @RequestBody OfferCreateRequest request,
-            @AuthenticationPrincipal JwtAuthentication authentication
+            @AuthenticationPrincipal LoginMember loginMember
     ) {
-
-        validateJwtAuthentication(authentication);
-
-        OfferResponse response = offerService.offer(request, articleId, authentication);
+        OfferResponse response = offerService.offer(request, articleId, loginMember.getId());
 
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseMessage.SUCCESS, response)
@@ -54,12 +52,12 @@ public class OfferController {
     public ResponseEntity<ApiResponse> getAllByArticleId(
             @PathVariable Long articleId,
             @PageableDefault(sort = "price", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
-            @AuthenticationPrincipal JwtAuthentication authentication
+            @AuthenticationPrincipal LoginMember loginMember
     ) {
 
         Page<OfferBriefResponse> pageResponses = offerService.findAllByArticleId(pageable, articleId);
 
-        int offerCountOfCurrentMember = offerService.findOfferCountOfCurrentMember(authentication, articleId);
+        int offerCountOfCurrentMember = offerService.findOfferCountOfCurrentMember(loginMember, articleId);
 
         PageInfo pageInfo = getPageInfo(pageResponses);
 
@@ -70,20 +68,13 @@ public class OfferController {
 
     @ApiOperation("가격채택")
     @PatchMapping(value = "/articles/offers/{offerId}")
-    public ResponseEntity<ApiResponse> adopteOffer(@PathVariable Long offerId, @AuthenticationPrincipal JwtAuthentication authentication) {
-        validateJwtAuthentication(authentication);
-
-        offerService.adopteOffer(offerId, authentication);
+    @MemberOnly
+    public ResponseEntity<ApiResponse> adopteOffer(@PathVariable Long offerId, @AuthenticationPrincipal LoginMember loginMember) {
+        offerService.adopteOffer(offerId, loginMember.getId());
 
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseMessage.SUCCESS)
         );
-    }
-
-    private void validateJwtAuthentication(JwtAuthentication authentication) { // TODO: JwtAuthentication 로 관련 로직 이동
-        if (authentication == null) {
-            throw new BusinessException(ResponseMessage.PERMISSION_DENIED);
-        }
     }
 
     private PageInfo getPageInfo(Page<?> pageResponses) {

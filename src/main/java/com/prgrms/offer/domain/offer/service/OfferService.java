@@ -1,9 +1,9 @@
 package com.prgrms.offer.domain.offer.service;
 
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
@@ -33,9 +33,8 @@ public class OfferService {
     private final PropertyProvider propertyProvider;
 
     @Transactional
-    public OfferResponse offer(OfferCreateRequest request, Long articleId, JwtAuthentication authentication) {
-        Member offerer = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    public OfferResponse offer(OfferCreateRequest request, Long articleId, Long memberId) {
+        Member offerer = memberRepository.getById(memberId);
 
         List<Offer> offers = offerRepository.findAllByOffererIdAndArticleId(offerer.getId(), articleId);
         int offerCountOfCurrentMember = offers.size();
@@ -69,11 +68,11 @@ public class OfferService {
     }
 
     @Transactional
-    public void adopteOffer(Long offerId, JwtAuthentication authentication) {
+    public void adopteOffer(Long offerId, Long memberId) {
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.OFFER_NOT_FOUND));
 
-        validateWriterOrElseThrow(offer.getArticle(), authentication.loginId);
+        validateWriterOrElseThrow(offer.getArticle(), memberId);
 
         if (offerRepository.existsByArticleAndIsSelected(offer.getArticle(), true)) {
             throw new BusinessException(ResponseMessage.EXISTS_ALREADY_SELECTED_OFFER);
@@ -82,20 +81,19 @@ public class OfferService {
         offer.selectOffer();
     }
 
-    private void validateWriterOrElseThrow(Article article, String principal) {
-        if (!article.validateWriterByPrincipal(principal)) {
+    private void validateWriterOrElseThrow(Article article, Long memberId) {
+        if (!article.validateWriterByPrincipal(memberId)) {
             throw new BusinessException(ResponseMessage.PERMISSION_DENIED);
         }
     }
 
     @Transactional(readOnly = true)
-    public int findOfferCountOfCurrentMember(JwtAuthentication authentication, Long articleId) {
-        if(authentication == null) {
+    public int findOfferCountOfCurrentMember(LoginMember loginMember, Long articleId) {
+        if(loginMember.isAnonymous()) {
             return 0;
         }
 
-        Member currentMember = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+        Member currentMember = memberRepository.getById(loginMember.getId());
 
         final int offerCountOfCurrentMember = (int) offerRepository.countByOffererIdAndArticleId(currentMember.getId(), articleId).longValue();
 

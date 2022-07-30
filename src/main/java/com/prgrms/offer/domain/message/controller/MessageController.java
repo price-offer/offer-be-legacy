@@ -1,11 +1,12 @@
 package com.prgrms.offer.domain.message.controller;
 
+import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
+import com.prgrms.offer.authentication.presentation.LoginMember;
+import com.prgrms.offer.authentication.aop.MemberOnly;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.common.page.PageDto;
 import com.prgrms.offer.common.page.PageInfo;
-import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.member.service.MemberService;
 import com.prgrms.offer.domain.message.model.dto.MessageContentResponse;
 import com.prgrms.offer.domain.message.model.dto.MessageRequest;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,16 +38,15 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping("/member/{memberId}/offerId/{offerId}")
+    @MemberOnly
     public ResponseEntity<ApiResponse> sendMessageToOffererOnclickMessageButton(
         @PathVariable Long memberId,
         @RequestParam(value = "articleId") long articleId,
         @PathVariable @Min(1) long offerId,
         @RequestBody @Valid MessageRequest messageRequest,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
+        @AuthenticationPrincipal LoginMember loginMember) {
 
-        validateJwtAuthentication(authentication);
-
-        messageService.sendMessageToOffererOnclickMessageButton(memberId, authentication.loginId,
+        messageService.sendMessageToOffererOnclickMessageButton(memberId, loginMember.getId(),
             articleId,
             offerId,
             messageRequest.getContent());
@@ -56,14 +55,13 @@ public class MessageController {
     }
 
     @GetMapping("/messageBox")
+    @MemberOnly
     public ResponseEntity<ApiResponse> getMessageBox(
         @PageableDefault Pageable pageable,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
-
-        validateJwtAuthentication(authentication);
+        @AuthenticationPrincipal LoginMember loginMember) {
 
         Page<MessageRoomResponse> messageRoomResponsePage = messageService.getMessageBox(
-            authentication.loginId, pageable);
+            loginMember.getId(), pageable);
 
         PageInfo pageInfo = getPageInfo(messageRoomResponsePage);
 
@@ -75,15 +73,14 @@ public class MessageController {
 
     // request param, pathvariable notnull, body not null 체크하기
     @PostMapping("/messageRoom/{messageRoomId}")
+    @MemberOnly
     public ResponseEntity<ApiResponse> sendMessage(
         @PathVariable @Min(1) long messageRoomId,
         @RequestBody @Valid MessageRequest messageRequest,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
-
-        validateJwtAuthentication(authentication);
+        @AuthenticationPrincipal LoginMember loginMember) {
 
         OutgoingMessageResponse messageResponse = messageService.sendMessage(messageRoomId,
-            messageRequest, authentication.loginId
+            messageRequest, loginMember.getId()
         );
 
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, messageResponse));
@@ -91,15 +88,14 @@ public class MessageController {
 
     // 대화방 단건 조회 : 상대방과의 쪽지 내용 조회
     @GetMapping("/messageRoom/{messageRoomId}/contents")
+    @MemberOnly
     public ResponseEntity<ApiResponse> getMessageRoomContents(
         @PathVariable @Min(1) long messageRoomId,
         @PageableDefault Pageable pageable,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
-
-        validateJwtAuthentication(authentication);
+        @AuthenticationPrincipal LoginMember loginMember) {
 
         Page<MessageContentResponse> messageContentResponsePage =
-            messageService.getMessageRoomContents(messageRoomId, authentication.loginId, pageable);
+            messageService.getMessageRoomContents(messageRoomId, loginMember.getId(), pageable);
 
         PageInfo pageInfo = getPageInfo(messageContentResponsePage);
 
@@ -114,22 +110,14 @@ public class MessageController {
     }
 
     @GetMapping("/messageRoom/{messageRoomId}/messageRoomInfo")
+    @MemberOnly
     public ResponseEntity<ApiResponse> getMessageRoomInfo(
         @PathVariable @Min(1) long messageRoomId,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
-
-        validateJwtAuthentication(authentication);
-
+        @AuthenticationPrincipal LoginMember loginMember) {
         MessageRoomInfoResponse messageRoomInfoResponse
-            = messageService.getMessageRoomInfo(messageRoomId, authentication.loginId);
+            = messageService.getMessageRoomInfo(messageRoomId, loginMember.getId());
 
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, messageRoomInfoResponse));
-    }
-
-    private void validateJwtAuthentication(JwtAuthentication authentication) {
-        if (authentication == null) {
-            throw new BusinessException(ResponseMessage.PERMISSION_DENIED);
-        }
     }
 
     private PageInfo getPageInfo(Page<?> pageResponses) {

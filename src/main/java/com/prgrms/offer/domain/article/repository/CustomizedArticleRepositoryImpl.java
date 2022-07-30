@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class CustomizedArticleRepositoryImpl extends QuerydslRepositorySupport implements
     CustomizedArticleRepository {
 
+
     private static final List<Integer> tradeStatusOnSaleOrBooked =
         Arrays.asList(TradeStatus.ON_SALE.getCode(), TradeStatus.RESERVING.getCode());
 

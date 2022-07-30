@@ -1,14 +1,13 @@
 package com.prgrms.offer.domain.member.controller;
 
+import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.member.model.dto.*;
 import com.prgrms.offer.domain.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,22 +36,6 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.VALID_EMAIL));
     }
 
-    @PostMapping("/members")
-    public ResponseEntity<ApiResponse> createUser(@RequestBody @Valid MemberCreateRequest request) {
-        MemberCreateResponse response = memberService.createMember(request);
-        return ResponseEntity.ok(
-                ApiResponse.of(ResponseMessage.SUCCESS, response)
-        );
-    }
-
-    @PostMapping("/members/login")
-    public ResponseEntity<ApiResponse> emailLogin(@RequestBody @Valid EmailLoginRequest request) {
-        MemberResponse response = memberService.login(request);
-        return ResponseEntity.ok(
-                ApiResponse.of(ResponseMessage.SUCCESS, response)
-        );
-    }
-
     @PostMapping("/members/imageUrls")
     public ResponseEntity<ApiResponse> convertToImageUrl(@ModelAttribute MultipartFile image) throws IOException {
         if (image == null || image.isEmpty()) {
@@ -66,15 +49,15 @@ public class MemberController {
 
     @PatchMapping("/members/me")
     public ResponseEntity<ApiResponse> editProfile(
-            @AuthenticationPrincipal JwtAuthentication authentication,
+            @AuthenticationPrincipal Long memberId,
             @RequestBody @Valid ProfileEdit request) {
-        MemberResponse response = memberService.editProfile(authentication, request);
+        MemberResponse response = memberService.editProfile(memberId, request);
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
     }
 
     @GetMapping("/members/me")
-    public ResponseEntity<ApiResponse> getProfile(@AuthenticationPrincipal JwtAuthentication authentication) {
-        MemberResponse response = memberService.getProfile(authentication);
+    public ResponseEntity<ApiResponse> getProfile(@AuthenticationPrincipal Long memberId) {
+        MemberResponse response = memberService.getProfile(memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
     }
 
@@ -85,11 +68,8 @@ public class MemberController {
     }
 
     @GetMapping("/members/mypage")
-    public ResponseEntity<ApiResponse> getMyProfile(@AuthenticationPrincipal JwtAuthentication authentication) {
-        if (authentication == null) {
-            throw new BusinessException(ResponseMessage.PERMISSION_DENIED);
-        }
-        MyProfile response = memberService.getMyProfile(authentication);
+    public ResponseEntity<ApiResponse> getMyProfile(@AuthenticationPrincipal Long memberId) {
+        MyProfile response = memberService.getMyProfile(memberId);
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
     }
 }
