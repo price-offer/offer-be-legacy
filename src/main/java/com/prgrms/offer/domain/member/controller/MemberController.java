@@ -27,15 +27,6 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/members")
-    public ResponseEntity<ApiResponse> checkDuplicateEmail(@RequestParam String email) {
-        boolean isDuplicateEmail = memberService.isDuplicateEmail(email);
-        if (isDuplicateEmail) {
-            return ResponseEntity.ok(ApiResponse.of(ResponseMessage.DUPLICATE_EMAIL));
-        }
-        return ResponseEntity.ok(ApiResponse.of(ResponseMessage.VALID_EMAIL));
-    }
-
     @PostMapping("/members/imageUrls")
     public ResponseEntity<ApiResponse> convertToImageUrl(@ModelAttribute MultipartFile image) throws IOException {
         if (image == null || image.isEmpty()) {

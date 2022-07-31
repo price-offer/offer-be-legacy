@@ -1,24 +1,26 @@
 package com.prgrms.offer.domain.member.service;
 
 import com.prgrms.offer.common.message.ResponseMessage;
-import com.prgrms.offer.common.utils.S3ImageUploader;
+import com.prgrms.offer.common.utils.ImageUploader;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.article.repository.LikeArticleRepository;
-import com.prgrms.offer.domain.member.model.dto.*;
+import com.prgrms.offer.domain.member.model.dto.MemberProfile;
+import com.prgrms.offer.domain.member.model.dto.MemberResponse;
+import com.prgrms.offer.domain.member.model.dto.MyProfile;
+import com.prgrms.offer.domain.member.model.dto.ProfileEdit;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,19 +30,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberConverter memberConverter;
-    private final S3ImageUploader s3ImageUploader;
+    private final ImageUploader s3ImageUploader;
     private final ArticleRepository articleRepository;
     private final ReviewRepository reviewRepository;
     private final OfferRepository offerRepository;
     private final LikeArticleRepository likeArticleRepository;
 
     private final PropertyProvider propertyProvider;
-
-    @Transactional(readOnly = true)
-    public boolean isDuplicateEmail(String email) {
-        Optional<Member> optionalMember = memberRepository.findByPrincipal(email);
-        return optionalMember.isPresent();
-    }
 
     public String getProfileImageUrl(MultipartFile image) throws IOException {
         return s3ImageUploader.upload(image, propertyProvider.getPROFILE_IMG_DIR());

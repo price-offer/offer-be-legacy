@@ -2,10 +2,15 @@ package com.prgrms.offer.domain.article.service;
 
 import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.message.ResponseMessage;
-import com.prgrms.offer.common.utils.S3ImageUploader;
+import com.prgrms.offer.common.utils.ImageUploader;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.domain.article.model.dto.*;
+import com.prgrms.offer.domain.article.model.dto.ArticleBriefViewResponse;
+import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateRequest;
+import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateResponse;
+import com.prgrms.offer.domain.article.model.dto.ArticleDetailResponse;
+import com.prgrms.offer.domain.article.model.dto.CodeAndNameInfosResponse;
+import com.prgrms.offer.domain.article.model.dto.ProductImageUrlsResponse;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.model.entity.ProductImage;
 import com.prgrms.offer.domain.article.model.value.Category;
@@ -16,16 +21,14 @@ import com.prgrms.offer.domain.article.repository.ProductImageRepository;
 import com.prgrms.offer.domain.article.repository.TemporalArticle;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +49,7 @@ public class ArticleService {
     private final ReviewRepository reviewRepository;
     private final MessageRoomRepository messageRoomRepository;
     private final ArticleConverter converter;
-    private final S3ImageUploader s3ImageUploader;
+    private final ImageUploader s3ImageUploader;
 
     private final PropertyProvider propertyProvider;
 
