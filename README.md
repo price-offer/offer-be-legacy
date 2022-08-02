@@ -6,7 +6,8 @@
   
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=coverage)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
-  
+
+[![Sonar Cloud](https://github.com/price-offer/offer-be/actions/workflows/build.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/build.yml)
 </div>
 
 ---
