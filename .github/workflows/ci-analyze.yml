@@ -1,4 +1,5 @@
-name: Sonar Cloud
+name: Sonar & Jacoco Analyze
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
