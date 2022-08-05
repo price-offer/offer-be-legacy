@@ -7,7 +7,10 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=coverage)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=price-offer_offer-be&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=price-offer_offer-be)
 
-[![Sonar Cloud](https://github.com/price-offer/offer-be/actions/workflows/build.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/build.yml)
+[![Sonar & Jacoco Analyze](https://github.com/price-offer/offer-be/actions/workflows/ci-analyze.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/ci-analyze.yml)
+
+[![Deploy to Dev Server](https://github.com/price-offer/offer-be/actions/workflows/deploy-dev.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/deploy-dev.yml)
+[![Deploy to Production Server](https://github.com/price-offer/offer-be/actions/workflows/deploy-prod.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/deploy-prod.yml)
 </div>
 
 ---
