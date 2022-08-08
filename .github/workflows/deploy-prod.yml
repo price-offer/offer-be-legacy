@@ -62,4 +62,5 @@ jobs:
             docker rm -f $(docker ps -qa)
             docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
             docker image prune -f
+            docker cp /home/github/offer-env/application-prod.yml $DOCKER_REPO:/
             docker run ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
