@@ -3,5 +3,4 @@ EXPOSE 8080
 ARG JAR_FILE=/build/libs/offer-0.0.1-SNAPSHOT.jar
 VOLUME ["/var/log"]
 COPY ${JAR_FILE} offer-prod-app.jar
-COPY /home/github/offer-env/application-prod.yml /root/offer-env/application-prod.yml
-ENTRYPOINT ["java","-jar","-Dspring.config.location=/root/offer-env/application-prod.yml","/offer-prod-app.jar"]
+ENTRYPOINT ["java","-jar","-Dspring.config.location=/application-prod.yml","/offer-prod-app.jar"]
