@@ -13,7 +13,7 @@ env:
   DOCKER_TAG: 1.0
 
 jobs:
-  build_and_deploy:
+  build_and_deploy_to_dev:
 
     runs-on: ubuntu-latest
 
