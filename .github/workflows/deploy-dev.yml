@@ -50,7 +50,7 @@ jobs:
           docker push $DOCKER_REPO:$DOCKER_TAG
 
       ## deploy to CD server with SSH
-      - name: Deploy to CD
+      - name: Deploy to CD with SSH
         uses: appleboy/ssh-action@master
         id: deploy-dev
         with:
