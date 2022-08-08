@@ -69,7 +69,7 @@
 
 
 ## Reference Documents
-- [API Document](https://github.com/prgrms-web-devcourse/Team_Price_Offer_BE/wiki/API)
+- [API Document](https://github.com/price-offer/offer-be/wiki/API)
 - [Front-end Repo](https://github.com/price-offer/offer-fe)
 - [요구사항 분석 및 일정관리](https://www.notion.so/backend-devcourse/4-Price-Offer-1144520571434792b3ce34c74f721c5f)
 - [와이어프레임 및 디자인](https://www.figma.com/file/PhqIqgC8ZJ1ovQTqLQuKKD/Price-Offer?node-id=2537%3A4446)
