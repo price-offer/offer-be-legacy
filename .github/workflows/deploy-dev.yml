@@ -47,7 +47,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f $DOCKER_FILE -t $DOCKER_REPO:$DOCKER_TAG .
-          docker push $DOCKER_REPO:$DOCKER_TAG
+          sudo docker push $DOCKER_REPO:$DOCKER_TAG
 
       ## deploy to CD server with SSH
       - name: Deploy to CD with SSH
@@ -60,7 +60,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             docker rm -f $(docker ps -qa)
-            docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
             docker image prune -f
             docker cp /home/github/offer-env/application-dev.yml $DOCKER_REPO:/
             docker run ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
