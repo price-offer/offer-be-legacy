@@ -9,11 +9,11 @@ permissions:
 
 env:
   DOCKER_FILE: Dockerfile-dev
-  DOCKER_REPO: offer-dev
+  DOCKER_IMAGE_NAME: offer-dev
   DOCKER_TAG: 1.0
 
 jobs:
-  build_and_deploy:
+  build_and_deploy_to_dev:
 
     runs-on: ubuntu-latest
 
@@ -46,8 +46,8 @@ jobs:
       - name: Docker build & push to hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f $DOCKER_FILE -t $DOCKER_REPO:$DOCKER_TAG .
-          sudo docker push $DOCKER_REPO:$DOCKER_TAG
+          docker build -f $DOCKER_FILE -t ${{ secrets.DOCKER_USERNAME }}/$DOCKER_IMAGE_NAME:$DOCKER_TAG .
+          sudo docker push ${{ secrets.DOCKER_USERNAME }}/$DOCKER_IMAGE_NAME:$DOCKER_TAG
 
       ## deploy to CD server with SSH
       - name: Deploy to CD with SSH
