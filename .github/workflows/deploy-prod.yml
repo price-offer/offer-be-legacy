@@ -10,6 +10,7 @@ permissions:
 env:
   DOCKER_FILE: Dockerfile-prod
   DOCKER_REPO: offer-prod
+  DOCKER_TAG: 1.0
 
 jobs:
   build:
@@ -45,11 +46,11 @@ jobs:
       - name: Docker build & push to hub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f $DOCKER_FILE -t ${{ secrets.DOCKER_REPO }}/$DOCKER_REPO .
-          docker push ${{ secrets.DOCKER_REPO }}/$DOCKER_REPO
+          docker build -f $DOCKER_FILE -t $DOCKER_REPO:$DOCKER_TAG .
+          docker push $DOCKER_REPO:$DOCKER_TAG
 
-      ## deploy to CD server
-      - name: Deploy to CD
+      ## deploy to CD server with SSH
+      - name: Deploy to CD with SSH
         uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
