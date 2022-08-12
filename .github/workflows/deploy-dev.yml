@@ -9,8 +9,9 @@ permissions:
 
 env:
   DOCKER_FILE: Dockerfile-dev
+  DOCKER_CONTAINER_NAME: offer-dev
   DOCKER_IMAGE_NAME: offer-dev
-  DOCKER_TAG: 1.0
+  DOCKER_TAG: latest
 
 jobs:
   build_and_deploy_to_dev:
@@ -59,8 +60,8 @@ jobs:
           key: ${{ secrets.AWS_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker rm -f $DOCKER_IMAGE_NAME
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
+            docker rm -f $DOCKER_CONTAINER_NAME
+            docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO:$DOCKER_TAG
             docker image prune -f
-            docker cp /home/github/offer-env/application-dev.yml $DOCKER_REPO:/
-            docker run ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
+            docker cp /home/${{ secrets.AWS_EC2_USERNAME }}/offer-env/application-dev.yml $DOCKER_CONTAINER_NAME:/
+            docker run ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO:$DOCKER_TAG
