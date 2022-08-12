@@ -59,7 +59,7 @@ jobs:
           key: ${{ secrets.AWS_SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker rm -f $(docker ps -qa)
+            docker rm -f $DOCKER_IMAGE_NAME
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/$DOCKER_REPO
             docker image prune -f
             docker cp /home/github/offer-env/application-dev.yml $DOCKER_REPO:/
