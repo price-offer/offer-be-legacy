@@ -2,5 +2,9 @@ FROM amazoncorretto:11
 EXPOSE 8080
 ARG JAR_FILE=/build/libs/offer-0.0.1-SNAPSHOT.jar
 VOLUME ["/var/log"]
-COPY ${JAR_FILE} offer-dev-app.jar
-ENTRYPOINT ["java","-jar","-Dspring.config.location=/application-dev.yml","/offer-dev-app.jar"]
+COPY ${JAR_FILE} /offer-dev-app.jar
+
+WORKDIR /
+USER root
+
+ENTRYPOINT ["java","-jar","-Dspring.config.location=/spring-run-env/application-dev.yml","/offer-dev-app.jar"]
