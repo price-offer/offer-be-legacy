@@ -7,4 +7,4 @@ COPY ${JAR_FILE} offer-prod-app.jar
 WORKDIR /
 USER root
 
-ENTRYPOINT ["java","-jar","-Dspring.config.location=/application-prod.yml","/offer-prod-app.jar"]
+ENTRYPOINT ["java","-jar","-Dspring.config.location=/spring-run-env/application-prod.yml","/offer-prod-app.jar"]
