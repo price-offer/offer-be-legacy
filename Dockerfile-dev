@@ -4,4 +4,7 @@ ARG JAR_FILE=/build/libs/offer-0.0.1-SNAPSHOT.jar
 VOLUME ["/var/log"]
 COPY ${JAR_FILE} /offer-dev-app.jar
 
+USER github
+WORKDIR /
+
 ENTRYPOINT ["java","-jar","-Dspring.config.location=/spring-run-env/application-dev.yml","/offer-dev-app.jar"]
