@@ -1,0 +1,16 @@
+FROM amazoncorretto:11
+LABEL maintainer="Jihun Hwang <goharrm@gmail.com>"
+
+RUN yum update -y \
+    && yum install -y procps \
+
+EXPOSE 8080
+VOLUME ["/var/log"]
+
+ARG JAR_FILE=/build/libs/offer-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} /offer-dev-app.jar
+
+USER root
+WORKDIR /
+
+ENTRYPOINT ["java","-jar","-Dspring.config.location=/spring-run-env/application-dev.yml","/offer-dev-app.jar"]
