@@ -1,7 +1,7 @@
 package com.prgrms.offer.authentication.presentation;
 
 import com.prgrms.offer.authentication.application.JwtTokenProvider;
-import com.prgrms.offer.common.utils.AuthorizationTokenExtractor;
+import com.prgrms.offer.authentication.utils.AuthorizationTokenExtractor;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -1,6 +1,5 @@
-package com.prgrms.offer.common.utils;
+package com.prgrms.offer.authentication.utils;
 
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;

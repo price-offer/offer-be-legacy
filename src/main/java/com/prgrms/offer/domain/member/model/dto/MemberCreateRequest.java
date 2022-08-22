@@ -1,12 +1,11 @@
 package com.prgrms.offer.domain.member.model.dto;
 
-import lombok.Getter;
+import static com.prgrms.offer.common.message.DtoValidationMessage.INVALID_PASSWORD_LENGTH;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
-import static com.prgrms.offer.common.message.DtoValidationMessage.*;
+import lombok.Getter;
 
 @Getter
 public class MemberCreateRequest {

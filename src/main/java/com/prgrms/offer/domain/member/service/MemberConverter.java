@@ -1,6 +1,8 @@
 package com.prgrms.offer.domain.member.service;
 
-import com.prgrms.offer.domain.member.model.dto.*;
+import com.prgrms.offer.domain.member.model.dto.MemberProfile;
+import com.prgrms.offer.domain.member.model.dto.MemberResponse;
+import com.prgrms.offer.domain.member.model.dto.MyProfile;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import org.springframework.stereotype.Component;
 

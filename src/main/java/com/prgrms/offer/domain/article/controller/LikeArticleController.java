@@ -1,8 +1,8 @@
 package com.prgrms.offer.domain.article.controller;
 
+import com.prgrms.offer.authentication.aop.MemberOnly;
 import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
 import com.prgrms.offer.authentication.presentation.LoginMember;
-import com.prgrms.offer.authentication.aop.MemberOnly;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.domain.article.model.dto.LikeArticleStatusResponse;
@@ -12,7 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

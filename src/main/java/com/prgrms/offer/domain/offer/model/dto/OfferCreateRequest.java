@@ -1,9 +1,8 @@
 package com.prgrms.offer.domain.offer.model.dto;
 
 import com.prgrms.offer.common.message.DtoValidationMessage;
-import lombok.Getter;
-
 import javax.validation.constraints.Min;
+import lombok.Getter;
 
 @Getter
 public class OfferCreateRequest {

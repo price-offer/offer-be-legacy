@@ -1,9 +1,8 @@
 package com.prgrms.offer.domain.article.repository;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter

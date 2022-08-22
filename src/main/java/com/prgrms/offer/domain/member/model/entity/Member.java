@@ -20,7 +20,8 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    private String oauthId;
+    private Long oauthId;
+    private String oauthType;
     private String nickname;
     private String address;
     private String profileImageUrl;
@@ -33,10 +34,12 @@ public class Member {
     protected Member() {
     }
 
-    public Member(Long id, String oauthId, String nickname, String address, String profileImageUrl, int offerLevel,
-                  int score) {
+    public Member(final Long id, final Long oauthId, final String oauthType, final String nickname,
+                  final String address, final String profileImageUrl,
+                  final int offerLevel, final int score) {
         this.id = id;
         this.oauthId = oauthId;
+        this.oauthType = oauthType;
         this.nickname = nickname;
         this.address = address;
         this.profileImageUrl = profileImageUrl;

@@ -6,9 +6,8 @@ import com.prgrms.offer.domain.offer.model.dto.OfferBriefResponse;
 import com.prgrms.offer.domain.offer.model.dto.OfferResponse;
 import com.prgrms.offer.domain.offer.model.dto.OffererResponse;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OfferConverter {

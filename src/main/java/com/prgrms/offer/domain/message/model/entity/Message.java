@@ -1,6 +1,5 @@
 package com.prgrms.offer.domain.message.model.entity;
 
-import com.prgrms.offer.domain.member.model.entity.Member;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
