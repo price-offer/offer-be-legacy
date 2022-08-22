@@ -15,7 +15,6 @@ import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
 import java.io.IOException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

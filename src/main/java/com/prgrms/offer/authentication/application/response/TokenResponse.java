@@ -1,20 +1,16 @@
 package com.prgrms.offer.authentication.application.response;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class TokenResponse {
 
-    private String token;
+    private final String token;
+    private final boolean alreadyJoined;
 
-    private TokenResponse() {
-    }
-
-    private TokenResponse(String token) {
-        this.token = token;
-    }
-
-    public static TokenResponse from(String token) {
-        return new TokenResponse(token);
+    public static TokenResponse of (String token, boolean alreadyJoined) {
+        return new TokenResponse(token, alreadyJoined);
     }
 }
