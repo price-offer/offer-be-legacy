@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 @Slf4j
@@ -54,9 +53,14 @@ public class KakaoOAuthClient {
     }
 
     public SocialProfileResponse requestSocialProfile(final String authCode) {
-        String accessToken = getAccessToken(authCode);
+        String accessToken = requestAccessToken(authCode);
         String socialProfileJsonString = requestSocialProfileToOAuthServer(accessToken);
         return parseToSocialProfileResponse(socialProfileJsonString);
+    }
+
+    private String requestAccessToken(String authCode) {
+        MultiValueMap<String, String> requestParams = createRequestParam(authCode);
+        return requestTokenToOAuthServer(requestParams);
     }
 
     private String requestSocialProfileToOAuthServer(final String accessToken) {
@@ -85,11 +89,6 @@ public class KakaoOAuthClient {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private String getAccessToken(String authCode) {
-        MultiValueMap<String, String> requestParams = createRequestParam(authCode);
-        return requestTokenToOAuthServer(requestParams);
     }
 
     private MultiValueMap<String, String> createRequestParam(final String code) {

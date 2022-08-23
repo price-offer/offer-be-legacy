@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoWebClient implements OAuthWebClient{
+public class OAuthWebClientImpl implements OAuthWebClient{
 
     private final RestTemplate restTemplate;
 
