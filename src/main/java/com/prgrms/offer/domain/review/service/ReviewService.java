@@ -1,9 +1,9 @@
 package com.prgrms.offer.domain.review.service;
 
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
@@ -23,8 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -38,12 +36,11 @@ public class ReviewService {
     private final PropertyProvider propertyProvider;
 
     @Transactional
-    public ReviewCreateResponse createReview(Long articleId, ReviewCreateRequest request, JwtAuthentication authentication) {
+    public ReviewCreateResponse createReview(Long articleId, ReviewCreateRequest request,  Long memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
-        Member reviewer = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+        Member reviewer = memberRepository.getById(memberId);
 
         if (reviewRepository.existsByReviewerAndArticle(reviewer, article)) {
             throw new BusinessException(ResponseMessage.ALREADY_REVIEWED);
@@ -76,16 +73,15 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)  //memberId 랑 authenticationOptional 가 같은 사용자임(현재 프로필 대상)
-    public Page<ReviewResponse> findAllByRole(Pageable pageable, long memberId, String role, Optional<JwtAuthentication> authenticationOptional) {
+    public Page<ReviewResponse> findAllByRole(Pageable pageable, long memberId, String role, LoginMember loginMember) {
         boolean isRevieweeBuyer = getRevieweeRoleIsBuyerOrElseThrow(role);
 
         Page<Review> reviewPage = reviewRepository.findAllByRevieweeIdAndIsRevieweeBuyer(pageable, memberId, isRevieweeBuyer);
 
-        if (authenticationOptional.isPresent()) { // 로그인 한 경우
-            Member currentMember = memberRepository.findByPrincipal(authenticationOptional.get().loginId)
-                    .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+        if (loginMember.isMember()) { // 로그인 한 경우
+            Member currentMember = memberRepository.getById(loginMember.getId());
 
-            boolean isSameAsCurrentMemberAndMyPageMember = currentMember.getId().longValue() == memberId;
+            boolean isSameAsCurrentMemberAndMyPageMember = currentMember.getId() == memberId;
 
             return reviewPage.map(r -> createReviewResponseForLoginMember(r, currentMember, isSameAsCurrentMemberAndMyPageMember));
         }
@@ -114,12 +110,11 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewResponse findByArticleIdAndReviewerAuth(Long articleId, JwtAuthentication authentication) {
+    public ReviewResponse findByArticleIdAndReviewerAuth(Long articleId, Long memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
-        Member reviewer = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+        Member reviewer = memberRepository.getById(memberId);
 
         Review review = reviewRepository.findByReviewerAndArticle(reviewer, article)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.REVIEW_NOT_FOUND));

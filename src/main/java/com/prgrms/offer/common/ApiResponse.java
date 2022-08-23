@@ -1,9 +1,8 @@
 package com.prgrms.offer.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.Optional;
-
 import com.prgrms.offer.common.message.ResponseMessage;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

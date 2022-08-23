@@ -4,10 +4,22 @@ import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
 import com.prgrms.offer.domain.article.model.value.TradeStatus;
 import com.prgrms.offer.domain.member.model.entity.Member;
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -32,6 +44,7 @@ public class Article {
     private Member writer;
 
     @Column
+    @Builder.Default
     private Integer likeCount = 0;
 
     @Column
@@ -117,8 +130,8 @@ public class Article {
         modifiedDate = LocalDateTime.now();
     }
 
-    public boolean validateWriterByPrincipal(String principal){
-        return this.writer.getPrincipal().equals(principal) ? true : false;
+    public boolean validateWriterByPrincipal(Long id){
+        return this.writer.getId() == id ? true : false;
     }
 
     public boolean validateWriterByWriterId(Long writerId){

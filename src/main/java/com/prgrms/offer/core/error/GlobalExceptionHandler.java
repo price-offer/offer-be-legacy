@@ -1,9 +1,9 @@
 package com.prgrms.offer.core.error;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-
-import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -63,12 +61,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         log.info(exception.getMessage() + " from HttpRequestMethodNotSupportedException");
         return createApiExceptionResult(ResponseMessage.HTTP_REQUEST_METHOD_NOT_SUPPORTED);
-    }
-
-    @ExceptionHandler(AmazonS3Exception.class)
-    public ResponseEntity<ApiResponse> handleAmazonS3Exception(AmazonS3Exception exception) {
-        log.info(exception.getMessage() + " from AmazonS3Exception");
-        return createApiExceptionResult(ResponseMessage.INTERNAL_SERVER_ERROR);
     }
 
     /**

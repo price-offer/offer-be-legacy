@@ -1,9 +1,8 @@
 package com.prgrms.offer.domain.article.model.dto;
 
 import com.prgrms.offer.common.message.DtoValidationMessage;
-import lombok.Getter;
-
 import javax.validation.constraints.NotNull;
+import lombok.Getter;
 
 @Getter
 public class TradeStatusUpdateRequest {

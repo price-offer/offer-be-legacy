@@ -1,14 +1,14 @@
 package com.prgrms.offer.domain.search.controller;
 
+import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.common.page.PageDto;
 import com.prgrms.offer.common.page.PageInfo;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
 import com.prgrms.offer.domain.article.model.dto.ArticleBriefViewResponse;
 import com.prgrms.offer.domain.search.model.dto.SearchFilterRequest;
 import com.prgrms.offer.domain.search.service.ArticleSearchService;
-import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,9 +34,9 @@ public class ArticleSearchController {
     public ResponseEntity<ApiResponse> searchWithTitle(
         @RequestParam(value = "title") @NotBlank String title,
         @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
+        @AuthenticationPrincipal LoginMember loginMember) {
         Page<ArticleBriefViewResponse> articleBriefViewResponse = articleSearchService.findByTitle(
-            title, pageable, Optional.ofNullable(authentication));
+            title, pageable, loginMember);
 
         PageInfo pageInfo = getPageInfo(articleBriefViewResponse);
 
@@ -55,7 +54,7 @@ public class ArticleSearchController {
         @RequestParam(value = "minPrice") @Nullable Integer minPrice,
         @RequestParam(value = "maxPrice") @Nullable Integer maxPrice,
         @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
-        @AuthenticationPrincipal JwtAuthentication authentication) {
+        @AuthenticationPrincipal LoginMember loginMember) {
 
         SearchFilterRequest searchFilterRequest = SearchFilterRequest.builder()
             .title(title)
@@ -65,7 +64,7 @@ public class ArticleSearchController {
             .maxPrice(maxPrice).build();
 
         Page<ArticleBriefViewResponse> articleBriefViewResponsePage = articleSearchService.findByFilter(
-            searchFilterRequest, pageable, Optional.ofNullable(authentication)
+            searchFilterRequest, pageable, loginMember
         );
 
         PageInfo pageInfo = getPageInfo(articleBriefViewResponsePage);

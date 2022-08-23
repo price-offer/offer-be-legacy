@@ -1,14 +1,17 @@
 package com.prgrms.offer.domain.member.model.entity;
 
 import com.prgrms.offer.domain.member.model.value.Score;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
+@Builder
 @Getter
 public class Member {
 
@@ -17,15 +20,10 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    private String principal;
-
-    private String provider;
-    private String providerId;
-
-    private String password;
+    private Long oauthId;
+    private String oauthType;
     private String nickname;
     private String address;
-
     private String profileImageUrl;
 
     @Builder.Default
@@ -36,23 +34,17 @@ public class Member {
     protected Member() {
     }
 
-    @Builder
-    public Member(String principal, String password, String nickname, String address, String profileImageUrl, int offerLevel
-    , int score, String provider, String providerId) {
-        this.principal = principal;
-        this.password = password;
+    public Member(final Long id, final Long oauthId, final String oauthType, final String nickname,
+                  final String address, final String profileImageUrl,
+                  final int offerLevel, final int score) {
+        this.id = id;
+        this.oauthId = oauthId;
+        this.oauthType = oauthType;
         this.nickname = nickname;
         this.address = address;
         this.profileImageUrl = profileImageUrl;
         this.offerLevel = offerLevel;
-        this.provider = provider;
-        this.providerId = providerId;
         this.score = score;
-    }
-
-    public void checkPassword(PasswordEncoder passwordEncoder, String credentials) {
-        if (!passwordEncoder.matches(credentials, password))
-            throw new IllegalArgumentException("Bad credential");
     }
 
     public int evaluateScore(int score) {
@@ -86,20 +78,5 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", principal='" + principal + '\'' +
-                ", provider='" + provider + '\'' +
-                ", providerId='" + providerId + '\'' +
-                ", password='" + password + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", address='" + address + '\'' +
-                ", profileImageUrl='" + profileImageUrl + '\'' +
-                ", offerLevel=" + offerLevel +
-                '}';
     }
 }

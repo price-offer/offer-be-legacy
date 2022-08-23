@@ -1,11 +1,16 @@
 package com.prgrms.offer.domain.article.service;
 
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.message.ResponseMessage;
-import com.prgrms.offer.common.utils.S3ImageUploader;
+import com.prgrms.offer.common.utils.ImageUploader;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.core.jwt.JwtAuthentication;
-import com.prgrms.offer.domain.article.model.dto.*;
+import com.prgrms.offer.domain.article.model.dto.ArticleBriefViewResponse;
+import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateRequest;
+import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateResponse;
+import com.prgrms.offer.domain.article.model.dto.ArticleDetailResponse;
+import com.prgrms.offer.domain.article.model.dto.CodeAndNameInfosResponse;
+import com.prgrms.offer.domain.article.model.dto.ProductImageUrlsResponse;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.model.entity.ProductImage;
 import com.prgrms.offer.domain.article.model.value.Category;
@@ -16,16 +21,14 @@ import com.prgrms.offer.domain.article.repository.ProductImageRepository;
 import com.prgrms.offer.domain.article.repository.TemporalArticle;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +49,7 @@ public class ArticleService {
     private final ReviewRepository reviewRepository;
     private final MessageRoomRepository messageRoomRepository;
     private final ArticleConverter converter;
-    private final S3ImageUploader s3ImageUploader;
+    private final ImageUploader s3ImageUploader;
 
     private final PropertyProvider propertyProvider;
 
@@ -66,11 +69,8 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleCreateOrUpdateResponse createOrUpdate(ArticleCreateOrUpdateRequest request, JwtAuthentication authentication) {
-        String loginId = authentication.loginId;
-
-        Member writer = memberRepository.findByPrincipal(loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    public ArticleCreateOrUpdateResponse createOrUpdate(ArticleCreateOrUpdateRequest request, Long memberId) {
+        Member writer = memberRepository.getById(memberId);
 
         Article articleEntity = null;
 
@@ -81,7 +81,7 @@ public class ArticleService {
             articleEntity = articleRepository.findById(request.getId())
                     .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
-            validateWriterOrElseThrow(articleEntity, loginId);
+            validateWriterOrElseThrow(articleEntity, memberId);
 
             articleEntity.updateInfo(
                     request.getTitle(),
@@ -107,11 +107,11 @@ public class ArticleService {
     }
 
     @Transactional
-    public void updateTradeStatus(Long articleId, int code, String loginId) {
+    public void updateTradeStatus(Long articleId, int code, Long memberId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
-        validateWriterOrElseThrow(article, loginId);
+        // TODO: 2022/07/27 memberId가 유효한지 검증
 
         article.updateTradeStatusCode(TradeStatus.of(code).getCode());
     }
@@ -138,11 +138,11 @@ public class ArticleService {
     }
 
     @Transactional
-    public void deleteOne(Long articleId, String loginId) {
+    public void deleteOne(Long articleId, LoginMember loginMember) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
-        validateWriterOrElseThrow(article, loginId);
+        validateWriterOrElseThrow(article, loginMember.getId());
 
         doOnDeleteSetNull(article);
 
@@ -150,15 +150,13 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleDetailResponse findById(Long articleId, Optional<JwtAuthentication> authenticationOptional) {
+    public ArticleDetailResponse findById(Long articleId, LoginMember loginMember) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
 
         boolean isLiked = false;
-        if (authenticationOptional.isPresent()) {
-            Member currentMember = memberRepository.findByPrincipal(authenticationOptional.get().loginId)
-                    .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
-
+        if (loginMember.isMember()) {
+            Member currentMember = memberRepository.getById(loginMember.getId());
             isLiked = likeArticleRepository.existsByMemberAndArticle(currentMember, article);
         }
 
@@ -173,7 +171,7 @@ public class ArticleService {
             Optional<Integer> categoryCodeOptional,
             Optional<Long> memberIdOptional,
             Optional<Integer> tradeStatusCodeOptional,
-            Optional<JwtAuthentication> authenticationOptional
+            LoginMember loginMember
     ) {
 
         Page<Article> postPage;
@@ -208,20 +206,17 @@ public class ArticleService {
             throw new BusinessException(ResponseMessage.NOT_SUPPORTING_PARAM_COMBINATION);
         }
 
-        if (!authenticationOptional.isPresent()) {
+        if (loginMember.isAnonymous()) {
             return postPage.map(p -> converter.toArticleBriefViewResponse(p, false));
         }
 
-        Member currentMember = memberRepository.findByPrincipal(authenticationOptional.get().loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
-
+        Member currentMember = memberRepository.getById(loginMember.getId());
         return postPage.map(p -> makeBriefViewResponseWithLikeInfo(p, currentMember));
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleBriefViewResponse> findAllBoughtProducts(Pageable pageable, JwtAuthentication authentication) {
-        Member member = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    public Page<ArticleBriefViewResponse> findAllBoughtProducts(Pageable pageable, LoginMember loginMember) {
+        Member member = memberRepository.getById(loginMember.getId());
 
         Page<Offer> offerPage = offerRepository.findAllByOffererAndIsSelected(pageable, member, true);
 
@@ -245,9 +240,8 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleBriefViewResponse> findAllByMyOffers(Pageable pageable, int tradeStatusCode, JwtAuthentication authentication) {
-        Member offerer = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    public Page<ArticleBriefViewResponse> findAllByMyOffers(Pageable pageable, int tradeStatusCode, LoginMember loginMember) {
+        Member offerer = memberRepository.getById(loginMember.getId());
 
         Page<TemporalArticle> articlePage;
         if(tradeStatusCode == TradeStatus.COMPLETED.getCode()) {
@@ -266,8 +260,8 @@ public class ArticleService {
         return converter.toArticleBriefViewResponse(temporalArticle, isLiked);
     }
 
-    private void validateWriterOrElseThrow(Article article, String principal) {
-        if (!article.validateWriterByPrincipal(principal)) {
+    private void validateWriterOrElseThrow(Article article, Long memberId) {
+        if (!article.validateWriterByPrincipal(memberId)) {
             throw new BusinessException(ResponseMessage.PERMISSION_DENIED);
         }
     }
@@ -285,9 +279,8 @@ public class ArticleService {
     }
 
     public Page<ArticleBriefViewResponse> getLikeArticlesWithTradeStatusCode(
-            Pageable pageable, JwtAuthentication authentication, Integer tradeStatusCode) {
-        Member member = memberRepository.findByPrincipal(authentication.loginId)
-                .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+            Pageable pageable, LoginMember loginMember, Integer tradeStatusCode) {
+        Member member = memberRepository.getById(loginMember.getId());
 
         if (tradeStatusCode == TradeStatus.COMPLETED.getCode()) {
             return articleRepository

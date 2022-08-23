@@ -260,7 +260,7 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,windows,macos,intellij+all
 
-src/main/resources/*.yml
+application-local.yml
 
 *.png
 *.jpg

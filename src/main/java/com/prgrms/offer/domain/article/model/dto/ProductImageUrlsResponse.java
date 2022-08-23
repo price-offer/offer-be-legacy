@@ -1,9 +1,8 @@
 package com.prgrms.offer.domain.article.model.dto;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class ProductImageUrlsResponse {

@@ -1,12 +1,11 @@
 package com.prgrms.offer.domain.review.model.dto;
 
 import com.prgrms.offer.common.message.DtoValidationMessage;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor

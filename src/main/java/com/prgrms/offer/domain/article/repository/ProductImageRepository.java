@@ -2,11 +2,10 @@ package com.prgrms.offer.domain.article.repository;
 
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.model.entity.ProductImage;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
     @Override

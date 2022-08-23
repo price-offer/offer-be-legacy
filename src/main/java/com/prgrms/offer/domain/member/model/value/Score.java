@@ -2,11 +2,9 @@ package com.prgrms.offer.domain.member.model.value;
 
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.domain.article.model.value.Category;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor

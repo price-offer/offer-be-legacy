@@ -1,9 +1,8 @@
 package com.prgrms.offer.domain.member.model.dto;
 
-import lombok.Getter;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import lombok.Getter;
 
 @Getter
 public class ProfileEdit {

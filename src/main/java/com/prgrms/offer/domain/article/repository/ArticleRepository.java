@@ -2,12 +2,11 @@ package com.prgrms.offer.domain.article.repository;
 
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.member.model.entity.Member;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Long>, CustomizedArticleRepository {
     @Override

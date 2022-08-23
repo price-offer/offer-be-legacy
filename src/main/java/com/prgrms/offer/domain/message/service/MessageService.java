@@ -43,16 +43,15 @@ public class MessageService {
 
     // 이미 보낸적 있는 사람에겐 채팅방 생성하지 않고 기존 채팅방 사용하기
     @Transactional
-    public void sendMessageToOffererOnclickMessageButton(long receiverId, String senderLoginId,
-        long articleId,
-        long offerId,
-        String content) {
+    public void sendMessageToOffererOnclickMessageButton(long receiverId, Long senderId,
+                                                         long articleId,
+                                                         long offerId,
+                                                         String content) {
 
         Member receiver = memberRepository.findById(receiverId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
 
-        Member sender = memberRepository.findByPrincipal(senderLoginId)
-            .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+        Member sender = memberRepository.getById(senderId);
 
         Article article = articleRepository.findById(articleId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
@@ -87,8 +86,8 @@ public class MessageService {
 
     // 쪽지함 가져오기
     @Transactional(readOnly = true)
-    public Page<MessageRoomResponse> getMessageBox(String loginId, Pageable pageable) {
-        Member me = memberRepository.findByPrincipal(loginId).get();
+    public Page<MessageRoomResponse> getMessageBox(Long memberId, Pageable pageable) {
+        Member me = memberRepository.getById(memberId);
 
         List<MessageRoom> messageRoomList = messageRoomRepository.findByMemberId(me.getId(), pageable);
 
@@ -107,14 +106,14 @@ public class MessageService {
     // 대화방에서 메시지 전송
     @Transactional
     public OutgoingMessageResponse sendMessage(
-        long messageRoomId,
-        MessageRequest messageRequest,
-        String loginId) {
+            long messageRoomId,
+            MessageRequest messageRequest,
+            Long memberId) {
         // 내가 대화방을 나간 상황
         MessageRoom myMessageRoom = messageRoomRepository.findById(messageRoomId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.EXITED_MESSAGE_ROOM));
 
-        isAuthenticatedUser(loginId, myMessageRoom);
+        isAuthenticatedUser(memberId, myMessageRoom);
 
         // 상대방이 대화방을 나간 상황
         Member messagePartner = myMessageRoom.getMessagePartner();
@@ -148,13 +147,13 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MessageContentResponse> getMessageRoomContents(long messageRoomId, String loginId,
-        Pageable pageable) {
+    public Page<MessageContentResponse> getMessageRoomContents(long messageRoomId, Long memberId,
+                                                               Pageable pageable) {
 
         MessageRoom myMessageRoom = messageRoomRepository.findById(messageRoomId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.MESSAGE_ROOM_NOT_FOUND));
 
-        isAuthenticatedUser(loginId, myMessageRoom);
+        isAuthenticatedUser(memberId, myMessageRoom);
 
         Page<Message> messageContentPage = messageRepository.findByMessageRoomOrderByMessageIdAsc(
             myMessageRoom, pageable);
@@ -164,12 +163,12 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
-    public MessageRoomInfoResponse getMessageRoomInfo(long messageRoomId, String loginId) {
+    public MessageRoomInfoResponse getMessageRoomInfo(long messageRoomId, Long memberId) {
 
         MessageRoom myMessageRoom = messageRoomRepository.findById(messageRoomId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.MESSAGE_ROOM_NOT_FOUND));
 
-        isAuthenticatedUser(loginId, myMessageRoom);
+        isAuthenticatedUser(memberId, myMessageRoom);
 
         Member messagePartner = myMessageRoom.getMessagePartner();
 
@@ -194,9 +193,8 @@ public class MessageService {
         return messageRoomRepository.save(new MessageRoom(member1, member2, article, offer));
     }
 
-    private Member isAuthenticatedUser(String loginId, MessageRoom myMessageRoom) {
-        Member me = memberRepository.findByPrincipal(loginId)
-            .orElseThrow(() -> new BusinessException(ResponseMessage.MEMBER_NOT_FOUND));
+    private Member isAuthenticatedUser(Long memberId, MessageRoom myMessageRoom) {
+        Member me = memberRepository.getById(memberId);
 
         // 다른 멤버의 대화방에 접근한 경우
         if (me.getId() != myMessageRoom.getMember().getId()) {

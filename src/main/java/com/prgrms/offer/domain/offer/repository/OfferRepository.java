@@ -3,14 +3,13 @@ package com.prgrms.offer.domain.offer.repository;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface OfferRepository extends JpaRepository<Offer, Long> {
     @Override

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-@PropertySource("service.properties")
+@PropertySource("classpath:service.properties")
 public class PropertyProvider {
     // for article
     private final int NUM_OF_REGISTERABLE_IMG;
