@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:offer-test;MODE=MYSQL;
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+
+oauth2:
+  kakao:
+    client:
+      id: test-client-id
+      secret: test-client-secret
+    url:
+      redirect: http://test-redirect-url
+      oauth-server: https://test-kakao-oauth-server-url
+      accessToken: https://test-kakao-access-token-url
+      userProfile: https://test-kakao-user-profile-url
+
+security:
+  jwt:
+    token:
+      secret-key: Z29uZy1jaGVjay1nb25nLWNoZWNrLWdvbmctY2hlY2stZ29uZy1jaGVjay1nb25nLWNoZWNrLWdvbmctY2hlY2stZ29uZy1jaGVjay1nb25nLWNoZWNrCg==
+      expire-time: 3600000
+
+server:
+  port: 7070

@@ -69,6 +69,14 @@ test {
     finalizedBy 'jacocoTestReport'
 }
 
+processResources.dependsOn('copySecret')
+
+task copySecret(type: Copy) {
+    from '../offer-be/be-submodule'
+    into 'src/main/resources'
+}
+
+
 // querydsl 적용
 def generated = 'src/main/generated'
 sourceSets {
