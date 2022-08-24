@@ -1,9 +1,11 @@
 package com.prgrms.offer.domain.member.model.entity;
 
 import com.prgrms.offer.domain.member.model.value.Score;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -14,8 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,10 +44,18 @@ public class Member {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "offer_level", nullable = false)
     @Builder.Default
     private int offerLevel = 1;
 
-    private int score;
+    @Column(name = "score", nullable = false)
+    @Builder.Default
+    private int score = 0;
+
+    @Column(name = "createdDate", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdDate;
+
 
     public int evaluateScore(int score) {
         return this.score += Score.of(score).getValue();

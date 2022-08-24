@@ -11,17 +11,12 @@ public class ProfileEdit {
     private String nickname;
 
     @NotBlank
-    @Size(max = 30)
-    private String address;
-
-    @NotBlank
     private String profileImageUrl;
 
     @Override
     public String toString() {
         return "ProfileEdit{" +
                 "nickname='" + nickname + '\'' +
-                ", address='" + address + '\'' +
                 ", profileImageUrl='" + profileImageUrl + '\'' +
                 '}';
     }

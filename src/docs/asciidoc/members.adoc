@@ -1,0 +1,52 @@
+[[Members]]
+== Members
+
+=== 내 프로필 조회
+
+==== Request
+
+operation::members/get-my-profile[snippets='request-headers,http-request']
+
+==== Response
+
+operation::members/get-my-profile[snippets='response-fields,http-response']
+
+=== 사용자 프로필 조회
+
+==== Request
+
+operation::members/get-profile[snippets='path-parameters,http-request']
+
+==== Response
+
+operation::members/get-profile[snippets='response-fields,response-body']
+
+=== 내 활동 조회
+
+==== Request
+
+operation::members/get-my-activity[snippets='request-headers,http-request']
+
+==== Response
+
+operation::members/get-my-activity[snippets='response-fields,response-body']
+
+=== 시용자 활동 조회
+
+==== Request
+
+operation::members/get-activity[snippets='path-parameters,http-request']
+
+==== Response
+
+operation::members/get-activity[snippets='response-fields,response-body']
+
+=== 회원 정보 수정
+
+==== Request
+
+operation::members/change-profile[snippets='request-headers,request-fields,http-request']
+
+==== Response
+
+operation::members/change-profile[snippets='http-response']

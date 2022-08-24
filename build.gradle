@@ -1,6 +1,7 @@
 plugins {
     id "io.spring.dependency-management" version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.5.6'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'java'
 
     id 'jacoco'
@@ -12,9 +13,14 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+    asciidoctorExtensions
     compileOnly {
         extendsFrom annotationProcessor
     }
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
 }
 
 repositories {
@@ -26,9 +32,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     //jwt 의존성
@@ -42,6 +50,9 @@ dependencies {
     // Rest Assured
     testImplementation 'io.rest-assured:rest-assured:4.4.0'
 
+    // rest-docs
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
     // for swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
@@ -64,9 +75,44 @@ sonarqube {
     }
 }
 
-test {
+tasks.named('test') {
+    outputs.dir snippetsDir
     useJUnitPlatform()
     finalizedBy 'jacocoTestReport'
+}
+
+tasks.named('asciidoctor') {
+    configurations 'asciidoctorExtensions'
+    sources {
+        include("**/index.adoc", "**/common/*.adoc")
+    }
+    baseDirFollowsSourceFile()
+    inputs.dir snippetsDir
+
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+task createDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static")
+}
+
+task displaceDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from ("${asciidoctor.outputDir}")
+    into ("build/resources/main/static")
+}
+
+bootJar {
+    dependsOn createDocument
+    dependsOn displaceDocument
 }
 
 processResources.dependsOn('copySecret')

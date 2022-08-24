@@ -88,7 +88,6 @@ public class ArticleService {
                     request.getContent(),
                     Category.of(request.getCategoryCode()).getCode(),
                     request.getTradeArea(),
-                    request.getQuantity(),
                     request.getPrice()
             );
 
