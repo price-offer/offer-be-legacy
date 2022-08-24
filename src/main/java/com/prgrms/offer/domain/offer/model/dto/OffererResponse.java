@@ -10,8 +10,6 @@ public class OffererResponse {
 
     private final String nickname;
 
-    private final String address;
-
     private final int offerLevel;
 
     private final String profileImageUrl;

@@ -15,6 +15,9 @@ spring:
       hibernate:
         show_sql: false
         format_sql: true
+  output:
+    ansi:
+      enabled: always
 
 oauth2:
   kakao:
@@ -35,3 +38,6 @@ security:
 
 server:
   port: 7070
+  servlet:
+    encoding:
+      force-response: true

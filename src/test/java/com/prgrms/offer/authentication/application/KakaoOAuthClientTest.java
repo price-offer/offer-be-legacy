@@ -1,11 +1,11 @@
 package com.prgrms.offer.authentication.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.prgrms.offer.TestConfig;
 import com.prgrms.offer.authentication.application.response.SocialProfileResponse;
-import org.assertj.core.api.Assertions;
+import com.prgrms.offer.domain.member.model.entity.Member.OAuthType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ class KakaoOAuthClientTest {
 
         assertAll(
                 () -> assertThat(socialProfile.getOauthId()).isEqualTo(1234L),
-                () -> assertThat(socialProfile.getOauthType()).isEqualTo("kakao"),
+                () -> assertThat(socialProfile.getOauthType()).isEqualTo(OAuthType.KAKAO),
                 () -> assertThat(socialProfile.getProfileImageUrl()).isEqualTo("http://test.jpg")
         );
     }

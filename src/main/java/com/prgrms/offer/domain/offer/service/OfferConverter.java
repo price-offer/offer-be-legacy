@@ -30,7 +30,6 @@ public class OfferConverter {
                         new OffererResponse(
                                 offerer.getId(),
                                 offerer.getNickname(),
-                                offerer.getAddress(),
                                 offerer.getOfferLevel(),
                                 offerer.getProfileImageUrl()
                         )
@@ -53,7 +52,6 @@ public class OfferConverter {
                         new OffererResponse(
                                 offerer.getId(),
                                 offerer.getNickname(),
-                                offerer.getAddress(),
                                 offerer.getOfferLevel(),
                                 offerer.getProfileImageUrl()
                         )

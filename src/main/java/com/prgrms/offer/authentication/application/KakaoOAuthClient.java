@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prgrms.offer.authentication.application.response.KakaoAccessTokenResponse;
 import com.prgrms.offer.authentication.application.response.SocialProfileResponse;
+import com.prgrms.offer.domain.member.model.entity.Member.OAuthType;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,7 +86,7 @@ public class KakaoOAuthClient {
             JsonNode kakaoAccount = jsonNode.get("kakao_account");
             JsonNode profile = kakaoAccount.get("profile");
             String profileImageUrl = profile.get("profile_image_url").asText();
-            return SocialProfileResponse.of("kakao", id, profileImageUrl);
+            return SocialProfileResponse.of(OAuthType.KAKAO, id, profileImageUrl);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

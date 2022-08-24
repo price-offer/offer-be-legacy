@@ -4,14 +4,17 @@ import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.common.utils.ImageUploader;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
+import com.prgrms.offer.domain.article.model.value.TradeStatus;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.article.repository.LikeArticleRepository;
 import com.prgrms.offer.domain.member.model.dto.MemberProfile;
-import com.prgrms.offer.domain.member.model.dto.MemberResponse;
 import com.prgrms.offer.domain.member.model.dto.MyProfile;
 import com.prgrms.offer.domain.member.model.dto.ProfileEdit;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
+import com.prgrms.offer.domain.member.service.response.ActivityResponse;
+import com.prgrms.offer.domain.member.service.response.MemberProfileResponse;
+import com.prgrms.offer.domain.member.service.response.MyActivityResponse;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import com.prgrms.offer.domain.review.repository.ReviewRepository;
 import java.io.IOException;
@@ -41,20 +44,17 @@ public class MemberService {
         return s3ImageUploader.upload(image, propertyProvider.getPROFILE_IMG_DIR());
     }
 
-    public MemberResponse editProfile(Long memberId, ProfileEdit request) {
+    public void editProfile(Long memberId, ProfileEdit request) {
         Member findMember = memberRepository.getById(memberId);
 
         findMember.changeNickname(request.getNickname());
-        findMember.changeAddress(request.getAddress());
         findMember.changeProfileImageUrl(request.getProfileImageUrl());
-
-        return memberConverter.toMemberResponse(findMember);
     }
 
     @Transactional(readOnly = true)
-    public MemberResponse getProfile(Long memberId) {
+    public MemberProfileResponse getProfile(Long memberId) {
         Member findMember = memberRepository.getById(memberId);
-        return memberConverter.toMemberResponse(findMember);
+        return MemberProfileResponse.from(findMember);
     }
 
     @Transactional(readOnly = true)
@@ -77,5 +77,26 @@ public class MemberService {
         long offerCount = offerRepository.countOffersByOfferer(member);
 
         return memberConverter.toMyProfile(member, sellingArticleCount, likeArticleCount, offerCount, reviewCount);
+    }
+
+    @Transactional(readOnly = true)
+    public MyActivityResponse getMyActivity(Long memberId) {
+        Member member = memberRepository.getById(memberId);
+        long sellingArticleCount = articleRepository.countByWriterAndTradeStatusCode(member, TradeStatus.ON_SALE.getCode());
+        long likeArticleCount = likeArticleRepository.countLikeArticlesByMember(member);
+        long soldArticleCount = articleRepository.countByWriterAndTradeStatusCode(member,
+                TradeStatus.COMPLETED.getCode());
+        long reviewCount = reviewRepository.countReviewsByReviewee(member);
+        return MyActivityResponse.of(sellingArticleCount, likeArticleCount, soldArticleCount, reviewCount);
+    }
+
+    @Transactional(readOnly = true)
+    public ActivityResponse getActivity(Long memberId) {
+        Member member = memberRepository.getById(memberId);
+        long sellingArticleCount = articleRepository.countByWriterAndTradeStatusCode(member, TradeStatus.ON_SALE.getCode());
+        long soldArticleCount = articleRepository.countByWriterAndTradeStatusCode(member,
+                TradeStatus.COMPLETED.getCode());
+        long reviewCount = reviewRepository.countReviewsByReviewee(member);
+        return ActivityResponse.of(sellingArticleCount, soldArticleCount, reviewCount);
     }
 }

@@ -7,6 +7,7 @@ import com.prgrms.offer.domain.member.model.entity.Member;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,17 +21,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Getter
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Table(indexes = {
         @Index(name = "article_idx_writer_id", columnList = "writer_id"),
-        @Index(name = "article_idx_category_code", columnList = "categoryCode"),
-        @Index(name = "article_idx_trade_status_code", columnList = "tradeStatusCode"),
-        @Index(name = "article_idx_writer_id_trade_status_code", columnList = "writer_id, tradeStatusCode")
+        @Index(name = "article_idx_category_code", columnList = "category_code"),
+        @Index(name = "article_idx_trade_status_code", columnList = "trade_status_code"),
+        @Index(name = "article_idx_writer_id_trade_status_code", columnList = "writer_id, trade_status_code")
 })
 public class Article {
 
@@ -43,55 +48,53 @@ public class Article {
     @JoinColumn(name = "writer_id", referencedColumnName = "member_id")
     private Member writer;
 
-    @Column
+    @Column(name = "like_count", nullable = false)
     @Builder.Default
     private Integer likeCount = 0;
 
-    @Column
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private Integer categoryCode;
+    @Column(name = "category_code")
+    private int categoryCode;
 
-    @Column
-    private Integer productStatusCode;
+    @Column(name = "product_status_code")
+    private int productStatusCode;
 
-    @Column
+    @Column(name = "trade_area")
     private String tradeArea;
 
-    @Column
-    private Integer quantity;
+    @Column(name = "trade_method_code")
+    private int tradeMethodCode;
 
-    @Column
-    private Integer tradeMethodCode;
+    @Column(name = "trade_status_code")
+    private int tradeStatusCode;
 
-    @Column
-    private Integer tradeStatusCode;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "main_image_url", columnDefinition = "TEXT")
     private String mainImageUrl;
 
-    @Column
-    private Integer price;
+    @Column(name = "price", nullable = false)
+    private int price;
 
-    @Column
-    private Integer viewCount;
+    @Column(name = "view_count")
+    private int viewCount;
 
-    @Column
+    @Column(name = "created_date", nullable = false)
+    @CreatedDate
     private LocalDateTime createdDate;
 
-    @Column
+    @Column(name = "modified_date")
+    @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    public void updateInfo(String title, String content, int categoryCode, String tradeArea, int quantity, int price) {
+    public void updateInfo(String title, String content, int categoryCode, String tradeArea, int price) {
         this.title = title;
         this.content = content;
         this.categoryCode = categoryCode;
         this.tradeArea = tradeArea;
-        this.quantity = quantity;
         this.price = price;
         modifiedDate = LocalDateTime.now();
     }
@@ -139,3 +142,4 @@ public class Article {
     }
 
 }
+

@@ -1,17 +1,29 @@
 package com.prgrms.offer.domain.member.model.entity;
 
 import com.prgrms.offer.domain.member.model.value.Score;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Member {
 
@@ -20,32 +32,30 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(name = "oauth_id", nullable = false)
     private Long oauthId;
-    private String oauthType;
+
+    @Enumerated(EnumType.STRING)
+    private OAuthType oauthType;
+
+    @Column(name = "nickname", nullable = false)
     private String nickname;
-    private String address;
+
+    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "offer_level", nullable = false)
     @Builder.Default
     private int offerLevel = 1;
 
-    private int score;
+    @Column(name = "score", nullable = false)
+    @Builder.Default
+    private int score = 0;
 
-    protected Member() {
-    }
+    @Column(name = "createdDate", nullable = false)
+    @CreatedDate
+    private LocalDateTime createdDate;
 
-    public Member(final Long id, final Long oauthId, final String oauthType, final String nickname,
-                  final String address, final String profileImageUrl,
-                  final int offerLevel, final int score) {
-        this.id = id;
-        this.oauthId = oauthId;
-        this.oauthType = oauthType;
-        this.nickname = nickname;
-        this.address = address;
-        this.profileImageUrl = profileImageUrl;
-        this.offerLevel = offerLevel;
-        this.score = score;
-    }
 
     public int evaluateScore(int score) {
         return this.score += Score.of(score).getValue();
@@ -57,10 +67,6 @@ public class Member {
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public void changeAddress(String address) {
-        this.address = address;
     }
 
     public void changeProfileImageUrl(String profileImageUrl) {
@@ -78,5 +84,9 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public enum OAuthType {
+        KAKAO
     }
 }
