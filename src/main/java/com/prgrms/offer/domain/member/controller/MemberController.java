@@ -1,14 +1,16 @@
 package com.prgrms.offer.domain.member.controller;
 
+import com.prgrms.offer.authentication.aop.MemberOnly;
 import com.prgrms.offer.authentication.presentation.AuthenticationPrincipal;
+import com.prgrms.offer.authentication.presentation.LoginMember;
 import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.error.exception.BusinessException;
-import com.prgrms.offer.domain.member.model.dto.MemberProfile;
 import com.prgrms.offer.domain.member.model.dto.MemberResponse;
-import com.prgrms.offer.domain.member.model.dto.MyProfile;
 import com.prgrms.offer.domain.member.model.dto.ProfileEdit;
 import com.prgrms.offer.domain.member.service.MemberService;
+import com.prgrms.offer.domain.member.service.response.MemberProfileResponse;
+import com.prgrms.offer.domain.member.service.response.MyActivityResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/members")
 public class MemberController {
 
     private final MemberService memberService;
@@ -36,7 +38,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/members/imageUrls")
+    @PostMapping("/imageUrls")
     public ResponseEntity<ApiResponse> convertToImageUrl(@ModelAttribute MultipartFile image) throws IOException {
         if (image == null || image.isEmpty()) {
             throw new BusinessException(ResponseMessage.INVALID_IMAGE_EXCEPTION);
@@ -47,7 +49,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
     }
 
-    @PatchMapping("/members/me")
+    @PatchMapping("/me")
     public ResponseEntity<ApiResponse> editProfile(
             @AuthenticationPrincipal Long memberId,
             @RequestBody @Valid ProfileEdit request) {
@@ -55,21 +57,23 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
     }
 
-    @GetMapping("/members/me")
-    public ResponseEntity<ApiResponse> getProfile(@AuthenticationPrincipal Long memberId) {
-        MemberResponse response = memberService.getProfile(memberId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
+    @GetMapping("/me")
+    @MemberOnly
+    public ResponseEntity<MemberProfileResponse> getProfileOfMine(@AuthenticationPrincipal LoginMember loginMember) {
+        MemberProfileResponse response = memberService.getProfile(loginMember.getId());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/members/{memberId}")
-    public ResponseEntity<ApiResponse> getOthersProfile(@PathVariable Long memberId) {
-        MemberProfile response = memberService.getOthersProfile(memberId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
+    @GetMapping("/{memberId}")
+    public ResponseEntity<MemberProfileResponse> getProfile(@PathVariable Long memberId) {
+        MemberProfileResponse response = memberService.getProfile(memberId);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/members/mypage")
-    public ResponseEntity<ApiResponse> getMyProfile(@AuthenticationPrincipal Long memberId) {
-        MyProfile response = memberService.getMyProfile(memberId);
-        return ResponseEntity.ok(ApiResponse.of(ResponseMessage.SUCCESS, response));
+    @GetMapping("/activity")
+    @MemberOnly
+    public ResponseEntity<MyActivityResponse> getMyProfile(@AuthenticationPrincipal Long memberId) {
+        MyActivityResponse response = memberService.getMyActivity(memberId);
+        return ResponseEntity.ok(response);
     }
 }

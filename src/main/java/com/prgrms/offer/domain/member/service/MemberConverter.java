@@ -14,7 +14,6 @@ public class MemberConverter {
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .offerLevel(member.getOfferLevel())
-                .address(member.getAddress())
                 .profileImageUrl(member.getProfileImageUrl())
                 .build();
         return new MemberResponse(memberDto);
@@ -26,7 +25,6 @@ public class MemberConverter {
                 .offerLevel(member.getOfferLevel())
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getProfileImageUrl())
-                .address(member.getAddress())
                 .build();
         return new MemberProfile(memberDto, articleCount, reviewCount);
     }
@@ -37,7 +35,6 @@ public class MemberConverter {
                 .offerLevel(member.getOfferLevel())
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getProfileImageUrl())
-                .address(member.getAddress())
                 .build();
         return new MyProfile(memberDto, articleCount, likeCount, offerCount, reviewCount);
     }

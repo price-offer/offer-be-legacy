@@ -25,20 +25,18 @@ public class MessageRoomResponse {
 
         private String nickName;
         private String profileImageUrl;
-        private String address;
 
-        private UserInfo(String userNickName, String userProfileImageUrl, String address) {
+        private UserInfo(String userNickName, String userProfileImageUrl) {
             this.nickName = userNickName;
             this.profileImageUrl = userProfileImageUrl;
-            this.address = address;
         }
 
         public static UserInfo createNullUserInfo() {
-            return new UserInfo(null, null, null);
+            return new UserInfo(null, null);
         }
 
         public static UserInfo createUserInfo(Member member){
-            return new UserInfo(member.getNickname(), member.getProfileImageUrl(), member.getAddress());
+            return new UserInfo(member.getNickname(), member.getProfileImageUrl());
         }
     }
 

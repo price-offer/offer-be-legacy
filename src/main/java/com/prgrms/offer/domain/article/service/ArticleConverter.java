@@ -118,11 +118,9 @@ public class ArticleConverter {
                 .author(
                         ArticleDetailResponse.AuthorDetail.builder()
                         .id(writer.getId())
-                        .email(writer.getAddress())
                         .offerLevel(writer.getOfferLevel())
                         .nickname(writer.getNickname())
                         .profileImageUrl(writer.getProfileImageUrl())
-                        .address(writer.getAddress())
                         .build()
                 )
                 .title(article.getTitle())
