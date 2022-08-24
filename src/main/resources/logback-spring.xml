@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="logback/console/console-appender.xml"/>
+
+    <springProfile name="local">
+        <logger name="com.prgrms.offer" level="DEBUG">
+            <appender-ref ref="console-appender"/>
+        </logger>
+
+        <logger name="org.springframework" level="INFO">
+            <appender-ref ref="console-appender"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="test">
+        <logger name="com.prgrms.offer" level="DEBUG">
+            <appender-ref ref="console-appender"/>
+        </logger>
+
+        <logger name="org.springframework" level="INFO">
+            <appender-ref ref="console-appender"/>
+        </logger>
+
+        <!--sql 구문 출력-->
+        <logger name="org.hibernate.SQL" level="DEBUG">
+            <appender-ref ref="console-query-appender"/>
+        </logger>
+
+        <!--insert, update, delete문 파라미터 바인딩-->
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+            <appender-ref ref="console-db-appender"/>
+        </logger>
+
+        <!--select 문에서 가져온 값 바인딩-->
+        <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE" additivity="false">
+            <appender-ref ref="console-db-appender"/>
+        </logger>
+
+        <!--DB slow query 로깅-->
+        <logger name="org.hibernate.SQL_SLOW" level="INFO">
+            <appender-ref ref="console-db-appender"/>
+        </logger>
+    </springProfile>
+</configuration>
