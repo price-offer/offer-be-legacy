@@ -262,6 +262,8 @@ gradle-app.setting
 
 application-local.yml
 
+src/main/resources/static/index.html
+
 *.png
 *.jpg
 *.jpeg
