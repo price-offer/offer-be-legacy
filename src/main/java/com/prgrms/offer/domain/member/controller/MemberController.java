@@ -9,6 +9,7 @@ import com.prgrms.offer.core.error.exception.BusinessException;
 import com.prgrms.offer.domain.member.model.dto.ProfileEdit;
 import com.prgrms.offer.domain.member.service.MemberService;
 import com.prgrms.offer.domain.member.service.response.ActivityResponse;
+import com.prgrms.offer.domain.member.service.response.DuplicationResponse;
 import com.prgrms.offer.domain.member.service.response.MemberProfileResponse;
 import com.prgrms.offer.domain.member.service.response.MyActivityResponse;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -80,6 +82,12 @@ public class MemberController {
     @GetMapping("/{memberId}/activity")
     public ResponseEntity<ActivityResponse> getActivity(@PathVariable Long memberId) {
         ActivityResponse response = memberService.getActivity(memberId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("duplication")
+    public ResponseEntity<DuplicationResponse> isDuplicateNickname(@RequestParam String nickname) {
+        DuplicationResponse response = memberService.isDuplicateNickname(nickname);
         return ResponseEntity.ok(response);
     }
 }

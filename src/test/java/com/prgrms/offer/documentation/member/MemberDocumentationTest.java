@@ -11,6 +11,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,8 +19,10 @@ import com.prgrms.offer.documentation.ApiDocumentationTest;
 import com.prgrms.offer.domain.member.controller.MemberController;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.service.response.ActivityResponse;
+import com.prgrms.offer.domain.member.service.response.DuplicationResponse;
 import com.prgrms.offer.domain.member.service.response.MemberProfileResponse;
 import com.prgrms.offer.domain.member.service.response.MyActivityResponse;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -192,6 +195,33 @@ public class MemberDocumentationTest extends ApiDocumentationTest {
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("변경할 닉네임"),
                                 fieldWithPath("profileImageUrl").type(JsonFieldType.STRING)
                                         .description("변경할 프로필 이미지 URL")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크")
+    void checkDuplicateNickname() throws Exception {
+        given(memberService.isDuplicateNickname("행복한 냉장고 3호"))
+                .willReturn(new DuplicationResponse(true));
+
+        ResultActions result = mockMvc.perform(
+                get("/api/members/duplication")
+                        .param("nickname", "행복한 냉장고 3호")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("members/check-duplicate-nickname",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestParameters(
+                                parameterWithName("nickname").description("중복을 확인할 닉네임")
+                        ),
+                        responseFields(
+                                fieldWithPath("duplicate").type(JsonFieldType.BOOLEAN).description("중복 여부")
                         )
                 ));
     }
