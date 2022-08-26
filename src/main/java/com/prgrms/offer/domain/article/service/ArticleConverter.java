@@ -83,18 +83,14 @@ public class ArticleConverter {
     }
 
     public Article toEntity(ArticleCreateOrUpdateRequest request, Member writer) {
-        return Article.builder()
-                .writer(writer)
+        return Article.builder(writer, request.getTitle(), request.getContent(), request.getPrice())
                 .likeCount(0)
-                .title(request.getTitle())
-                .content(request.getContent())
                 .categoryCode(Category.of(request.getCategoryCode()).getCode())
                 .productStatusCode(ProductStatus.of(request.getProductStatusCode()).getCode())
                 .tradeArea(request.getTradeArea())
                 .tradeMethodCode(TradeMethod.of(request.getTradeMethodCode()).getCode())
                 .tradeStatusCode(TradeStatus.ON_SALE.getCode())
                 .mainImageUrl(request.getImageUrls() == null || request.getImageUrls().isEmpty() ? null : request.getImageUrls().get(0))
-                .price(request.getPrice())
                 .createdDate(LocalDateTime.now())
                 .modifiedDate(LocalDateTime.now())
                 .viewCount(0)

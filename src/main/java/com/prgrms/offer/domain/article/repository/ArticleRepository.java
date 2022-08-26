@@ -68,4 +68,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Customi
             "where o.offerer = :offerer and o.article.tradeStatusCode <> 8 " +
             "group by a.createdDate")
     Page<TemporalArticle> findAllByOffererAndTradeInProgress(Member offerer, Pageable pageable);
+
+    default Article getById(Long id) {
+        return findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다. id = " + id));
+    }
 }

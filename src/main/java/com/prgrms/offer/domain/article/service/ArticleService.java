@@ -19,6 +19,7 @@ import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.article.repository.LikeArticleRepository;
 import com.prgrms.offer.domain.article.repository.ProductImageRepository;
 import com.prgrms.offer.domain.article.repository.TemporalArticle;
+import com.prgrms.offer.domain.article.service.response.ArticleResponse;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
@@ -299,5 +300,17 @@ public class ArticleService {
         offerRepository.doOnDeleteSetNullFromArticle(article);
         reviewRepository.doOnDeleteSetNullFromArticle(article);
         messageRoomRepository.doOnDeleteSetNullFromArticle(article);
+    }
+
+    public ArticleResponse findArticle(Long articleId, LoginMember loginMember) {
+        Article article = articleRepository.getById(articleId);
+
+        if (loginMember.isAnonymous()) {
+            return ArticleResponse.of(article, false);
+        }
+
+        Member member = memberRepository.getById(loginMember.getId());
+        boolean liked = likeArticleRepository.existsByMemberAndArticle(member, article);
+        return ArticleResponse.of(article, liked);
     }
 }

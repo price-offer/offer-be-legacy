@@ -1,0 +1,12 @@
+[[Articles]]
+== Articles
+
+=== 게시글 단건 조회
+
+==== Request
+
+operation::articles/get-article[snippets='path-parameters,http-request']
+
+==== Response
+
+operation::articles/get-article[snippets='response-fields,http-response']
