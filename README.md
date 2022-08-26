@@ -51,7 +51,9 @@
 - AWS S3
 - GitHub Actions
 - Docker
-- SonarCloud
+- SonarCloud, JaCoCo
+- Spring REST Docs
+- Junit5, Mockito
 
 ## Architecture
 
@@ -62,10 +64,11 @@
 ## ERD
 
 <div align="center">
-  
-<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/146873211-79a9e5b5-0055-4259-aa7f-c2f685dd6cc7.png">
-  
+
+<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/186859283-5f09472e-a4b4-4732-9af3-cb4d2a825d21.jpg">
+
 </div>
+
 
 
 ## Reference Documents
