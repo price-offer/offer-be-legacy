@@ -65,7 +65,7 @@
 
 <div align="center">
 
-<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/186859283-5f09472e-a4b4-4732-9af3-cb4d2a825d21.jpg">
+<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/186866660-a338c093-9eef-4aef-b2c3-0f1e37d15661.jpg">
 
 </div>
 
