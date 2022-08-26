@@ -13,6 +13,7 @@ import com.prgrms.offer.domain.member.model.dto.ProfileEdit;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.member.service.response.ActivityResponse;
+import com.prgrms.offer.domain.member.service.response.DuplicationResponse;
 import com.prgrms.offer.domain.member.service.response.MemberProfileResponse;
 import com.prgrms.offer.domain.member.service.response.MyActivityResponse;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
@@ -98,5 +99,9 @@ public class MemberService {
                 TradeStatus.COMPLETED.getCode());
         long reviewCount = reviewRepository.countReviewsByReviewee(member);
         return ActivityResponse.of(sellingArticleCount, soldArticleCount, reviewCount);
+    }
+
+    public DuplicationResponse isDuplicateNickname(String nickname) {
+        return new DuplicationResponse(memberRepository.existsByNickname(nickname));
     }
 }
