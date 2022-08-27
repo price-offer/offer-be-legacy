@@ -27,7 +27,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Builder
+@Builder(builderMethodName = "requiredFieldBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
@@ -89,6 +89,15 @@ public class Article {
     @Column(name = "modified_date")
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    // TODO: 2022/08/26 필수 필드 추가, CategoryCode, productStatusCode, tradeArea tradeMethodCode, tradeStatusCode
+    public static ArticleBuilder builder(Member writer, String title, String content, int price) {
+        return requiredFieldBuilder()
+                .writer(writer)
+                .title(title)
+                .content(content)
+                .price(price);
+    }
 
     public void updateInfo(String title, String content, int categoryCode, String tradeArea, int price) {
         this.title = title;

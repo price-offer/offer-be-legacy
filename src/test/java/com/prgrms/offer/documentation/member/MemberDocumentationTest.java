@@ -101,7 +101,7 @@ public class MemberDocumentationTest extends ApiDocumentationTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("사용자 아이디"),
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
                                 fieldWithPath("offerLevel").type(JsonFieldType.NUMBER).description("오퍼 레벨"),
-                                fieldWithPath("profileImageUrl").type(JsonFieldType.STRING).description("사용자 프로필 이미지")
+                                fieldWithPath("profileImageUrl").type(JsonFieldType.STRING).description("사용자 프로필 이미지 URL")
                         )
                 ));
     }

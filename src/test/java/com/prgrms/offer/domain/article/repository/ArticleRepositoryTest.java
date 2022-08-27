@@ -35,11 +35,7 @@ class ArticleRepositoryTest {
                 .oauthId(1L)
                 .oauthType(OAuthType.KAKAO)
                 .build());
-        Article article = articleRepository.save(Article.builder()
-                .writer(member)
-                .title("냉장고 팝니다")
-                .content("안쓰는 냉장고 팔아요")
-                .price(10000)
+        Article article = articleRepository.save(Article.builder(member, "냉장고 팝니다", "안쓰는 냉장고 팔아요", 10000)
                 .build());
 
         LocalDateTime afterSave = LocalDateTime.now();
@@ -55,32 +51,21 @@ class ArticleRepositoryTest {
                 .oauthType(OAuthType.KAKAO)
                 .build());
 
-        articleRepository.save(Article.builder()
-                .writer(member)
-                .title("냉장고 팝니다")
-                .content("안쓰는 냉장고 팔아요")
+        articleRepository.save(Article.builder(member, "냉장고 팝니다", "안쓰는 냉장고 팔아요", 10000)
                 .tradeStatusCode(TradeStatus.COMPLETED.getCode())
-                .price(10000)
                 .build());
 
-        articleRepository.save(Article.builder()
-                .writer(member)
-                .title("냉장고 팝니다")
-                .content("안쓰는 냉장고 팔아요")
+        articleRepository.save(Article.builder(member, "냉장고 팝니다", "안쓰는 냉장고 팔아요", 10000)
                 .tradeStatusCode(TradeStatus.ON_SALE.getCode())
-                .price(10000)
                 .build());
 
-        articleRepository.save(Article.builder()
-                .writer(member)
-                .title("냉장고 팝니다")
-                .content("안쓰는 냉장고 팔아요")
+        articleRepository.save(Article.builder(member, "냉장고 팝니다", "안쓰는 냉장고 팔아요", 10000)
                 .tradeStatusCode(TradeStatus.ON_SALE.getCode())
-                .price(10000)
                 .build());
 
         long onSaleCount = articleRepository.countByWriterAndTradeStatusCode(member, TradeStatus.ON_SALE.getCode());
-        long onCompleteCount = articleRepository.countByWriterAndTradeStatusCode(member, TradeStatus.COMPLETED.getCode());
+        long onCompleteCount = articleRepository.countByWriterAndTradeStatusCode(member,
+                TradeStatus.COMPLETED.getCode());
         assertAll(
                 () -> assertThat(onSaleCount).isEqualTo(2),
                 () -> assertThat(onCompleteCount).isEqualTo(1)

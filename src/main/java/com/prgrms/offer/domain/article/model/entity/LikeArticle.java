@@ -1,7 +1,6 @@
 package com.prgrms.offer.domain.article.model.entity;
 
 import com.prgrms.offer.domain.member.model.entity.Member;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
+@Builder(builderMethodName = "requiredFieldsBuilder")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(indexes = {
@@ -34,6 +33,7 @@ public class LikeArticle {
     @Column(name = "like_article_id")
     private Long id;
 
+    // TODO: 2022/08/26 Member가 아닌 memberId를 가지도록 수정. LikeArticle 조회시 memberId로 member를 추가로 쿼리해야됨
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")
     private Member member;
@@ -42,11 +42,9 @@ public class LikeArticle {
     @JoinColumn(name = "article_id", referencedColumnName = "article_id")
     private Article article;
 
-    private LocalDateTime createdDate;
-
-    public LikeArticle(Member member, Article article) {
-        this.member = member;
-        this.article = article;
-        this.createdDate = LocalDateTime.now();
+    public static LikeArticleBuilder builder(Member member, Article article) {
+        return requiredFieldsBuilder()
+                .member(member)
+                .article(article);
     }
 }

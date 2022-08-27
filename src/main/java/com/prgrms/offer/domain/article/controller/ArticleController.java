@@ -11,11 +11,11 @@ import com.prgrms.offer.core.error.exception.BusinessException;
 import com.prgrms.offer.domain.article.model.dto.ArticleBriefViewResponse;
 import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateRequest;
 import com.prgrms.offer.domain.article.model.dto.ArticleCreateOrUpdateResponse;
-import com.prgrms.offer.domain.article.model.dto.ArticleDetailResponse;
 import com.prgrms.offer.domain.article.model.dto.CodeAndNameInfosResponse;
 import com.prgrms.offer.domain.article.model.dto.ProductImageUrlsResponse;
 import com.prgrms.offer.domain.article.model.dto.TradeStatusUpdateRequest;
 import com.prgrms.offer.domain.article.service.ArticleService;
+import com.prgrms.offer.domain.article.service.response.ArticleResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
@@ -46,7 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/articles", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/articles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "게시글 (Article)")
 public class ArticleController {
 
@@ -54,7 +54,8 @@ public class ArticleController {
 
     @ApiOperation("이미지 -> URL 변환")
     @PostMapping(value = "/imageUrls", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> convertToImageUrls(@ModelAttribute List<MultipartFile> images) throws IOException {
+    public ResponseEntity<ApiResponse> convertToImageUrls(@ModelAttribute List<MultipartFile> images)
+            throws IOException {
 
         if (images == null || images.isEmpty()) {
             throw new BusinessException(ResponseMessage.INVALID_IMAGE_EXCEPTION);
@@ -76,7 +77,7 @@ public class ArticleController {
     public ResponseEntity<ApiResponse> putArticle(
             @Valid @RequestBody ArticleCreateOrUpdateRequest request,
             @AuthenticationPrincipal LoginMember loginMember
-            ) {
+    ) {
         ArticleCreateOrUpdateResponse response = articleService.createOrUpdate(request, loginMember.getId());
 
         return ResponseEntity.ok(
@@ -106,7 +107,7 @@ public class ArticleController {
             @RequestParam(value = "categoryCode", required = false) Integer categoryCode,
             @RequestParam(value = "memberId", required = false) Long memberId,
             @RequestParam(value = "tradeStatusCode", required = false) Integer tradeStatusCode,
-            @AuthenticationPrincipal  LoginMember loginMember
+            @AuthenticationPrincipal LoginMember loginMember
     ) {
 
         Page<ArticleBriefViewResponse> pageResponses = articleService.findAllByPages(
@@ -140,18 +141,11 @@ public class ArticleController {
         );
     }
 
-    @ApiOperation("게시글 단건 조회")
     @GetMapping(value = "/{articleId}")
-    public ResponseEntity<ApiResponse> getOne(
-            @PathVariable Long articleId,
-            @AuthenticationPrincipal LoginMember loginMember
-    ) {
-
-        ArticleDetailResponse response = articleService.findById(articleId, loginMember);
-
-        return ResponseEntity.ok(
-                ApiResponse.of(ResponseMessage.SUCCESS, response)
-        );
+    public ResponseEntity<ArticleResponse> showArticle(@PathVariable Long articleId,
+                                                       @AuthenticationPrincipal LoginMember loginMember) {
+        ArticleResponse response = articleService.findArticle(articleId, loginMember);
+        return ResponseEntity.ok(response);
     }
 
     @ApiOperation("마이페이지에서 내가 제안한 모든 게시글 조회")
@@ -162,7 +156,8 @@ public class ArticleController {
             @PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
             @AuthenticationPrincipal LoginMember loginMember
     ) {
-        Page<ArticleBriefViewResponse> pageResponses = articleService.findAllByMyOffers(pageable, tradeStatusCode, loginMember);
+        Page<ArticleBriefViewResponse> pageResponses = articleService.findAllByMyOffers(pageable, tradeStatusCode,
+                loginMember);
 
         PageInfo pageInfo = getPageInfo(pageResponses);
 
@@ -212,7 +207,8 @@ public class ArticleController {
             @PageableDefault(sort = "created_date", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
             @AuthenticationPrincipal LoginMember loginMember) {
 
-        Page<ArticleBriefViewResponse> responses = articleService.getLikeArticlesWithTradeStatusCode(pageable, loginMember, tradeStatusCode);
+        Page<ArticleBriefViewResponse> responses = articleService.getLikeArticlesWithTradeStatusCode(pageable,
+                loginMember, tradeStatusCode);
         PageInfo pageInfo = getPageInfo(responses);
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseMessage.SUCCESS, PageDto.of(responses.getContent(), pageInfo))

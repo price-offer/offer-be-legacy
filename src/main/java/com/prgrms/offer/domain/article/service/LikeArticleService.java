@@ -39,7 +39,7 @@ public class LikeArticleService {
             return converter.toLikeArticleStatusResponse(false);
         }
 
-        LikeArticle likeArticle = new LikeArticle(member, article);
+        LikeArticle likeArticle = LikeArticle.builder(member, article).build();
         likeArticleRepository.save(likeArticle);
 
         article.addLikeCount();
