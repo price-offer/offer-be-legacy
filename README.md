@@ -61,14 +61,13 @@
 ![image](https://user-images.githubusercontent.com/63030569/146950936-8048e151-61ea-41e2-892d-471835a6a730.png)
 
 
-## ERD
+## Database Model
 
 <div align="center">
 
-<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/186866660-a338c093-9eef-4aef-b2c3-0f1e37d15661.jpg">
+<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/187063144-2dbe3374-a07f-46a7-aafb-7a190fa24fc5.jpg">
 
 </div>
-
 
 
 ## Reference Documents
