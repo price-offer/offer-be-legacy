@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  DOCKER_FILE: Dockerfile-prod
+  DOCKER_FILE: docker/Dockerfile-prod
 
 jobs:
   build_and_deploy_to_prod:

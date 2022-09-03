@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 env:
-  DOCKER_FILE: Dockerfile-dev
+  DOCKER_FILE: docker/Dockerfile-dev
 
 jobs:
   build_and_deploy_to_dev:
