@@ -43,7 +43,7 @@
 ## Tech Stack
 
 - Java 11
-- Spring Boot 2.5.6
+- Spring Boot 2.5.6, Gradle 7.2
 - Spring Security 5.5.3
 - Spring Data JPA 2.5.6
 - Swagger 2.3
@@ -65,10 +65,14 @@
 
 <div align="center">
 
-<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/187063144-2dbe3374-a07f-46a7-aafb-7a190fa24fc5.jpg">
+<img width="1037" alt="offer-erd" src="https://user-images.githubusercontent.com/55920132/188258217-40b8d8af-dde4-4f5e-a90a-9b9d5e02d1b4.jpg">
 
 </div>
 
+### 주요 이슈
+- [게시글 랭킹에 대한 배치처리](https://github.com/price-offer/offer-be/issues/43)
+- [게시글 좋아요수, 조회수 갱신 관련 이슈](https://github.com/price-offer/offer-be/issues/54)
+- [게시글 좋아요 정보 기록 테이블(like_article)의 설계 관련 이슈](https://github.com/price-offer/offer-be/issues/55)
 
 ## Reference Documents
 - [API Document](https://github.com/price-offer/offer-be/wiki/API)
