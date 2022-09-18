@@ -7,7 +7,6 @@ import com.prgrms.offer.common.ApiResponse;
 import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.common.page.PageDto;
 import com.prgrms.offer.common.page.PageInfo;
-import com.prgrms.offer.domain.member.service.MemberService;
 import com.prgrms.offer.domain.message.model.dto.MessageContentResponse;
 import com.prgrms.offer.domain.message.model.dto.MessageRequest;
 import com.prgrms.offer.domain.message.model.dto.MessageRoomInfoResponse;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -34,20 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MessageController {
 
-    private final MemberService memberService;
     private final MessageService messageService;
 
     @PostMapping("/member/{memberId}/offerId/{offerId}")
     @MemberOnly
     public ResponseEntity<ApiResponse> sendMessageToOffererOnclickMessageButton(
         @PathVariable Long memberId,
-        @RequestParam(value = "articleId") long articleId,
         @PathVariable @Min(1) long offerId,
         @RequestBody @Valid MessageRequest messageRequest,
         @AuthenticationPrincipal LoginMember loginMember) {
 
         messageService.sendMessageToOffererOnclickMessageButton(memberId, loginMember.getId(),
-            articleId,
             offerId,
             messageRequest.getContent());
 

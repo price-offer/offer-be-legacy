@@ -299,7 +299,7 @@ public class ArticleService {
         likeArticleRepository.doOnDeleteSetNullFromArticle(article);
         offerRepository.doOnDeleteSetNullFromArticle(article);
         reviewRepository.doOnDeleteSetNullFromArticle(article);
-        messageRoomRepository.doOnDeleteSetNullFromArticle(article);
+        //messageRoomRepository.doOnDeleteSetNullFromArticle(article);
     }
 
     public ArticleResponse findArticle(Long articleId, LoginMember loginMember) {

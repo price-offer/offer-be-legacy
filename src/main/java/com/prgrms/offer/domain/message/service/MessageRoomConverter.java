@@ -21,15 +21,15 @@ public class MessageRoomConverter {
     private final MessageRoomResponseComparator messageRoomComparator = new MessageRoomResponseComparator();
 
     public MessageRoomResponse toMessageRoomResponse(MessageRoom messageRoom, Message message) {
-        Member messagePartner = messageRoom.getMessagePartner();
+        Member messagePartner = messageRoom.getPartner();
         UserInfo userInfo = messagePartner != null ? UserInfo.createUserInfo(messagePartner)
             : UserInfo.createNullUserInfo();
 
         return MessageRoomResponse.builder()
             .userInfo(userInfo)
-            .productImageUrl(messageRoom.getArticle().getMainImageUrl())
+            .productImageUrl(messageRoom.getOffer().getArticle().getMainImageUrl())
             .message(new MessageInfo(message.getContent(), message.getCreatedDate()))
-            .messageRoomId(messageRoom.getMessageRoomId())
+            .messageRoomId(messageRoom.getId())
             .build();
     }
 
