@@ -68,20 +68,7 @@ class MessageServiceTest {
         );
 
         Article article = articleRepository.save(
-                Article.builder()
-                        .content("팝니다")
-                        .createdDate(LocalDateTime.now())
-                        .likeCount(1)
-                        .mainImageUrl("")
-                        .modifiedDate(LocalDateTime.now())
-                        .price(1000)
-                        .productStatusCode(2)
-                        .title("당근")
-                        .tradeArea("a")
-                        .tradeMethodCode(3)
-                        .tradeStatusCode(4)
-                        .viewCount(0)
-                        .writer(me)
+                Article.builder(me, "당근", "팝니다", 1000)
                         .build()
         );
 
