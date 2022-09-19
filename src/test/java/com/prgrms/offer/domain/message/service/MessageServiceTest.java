@@ -25,18 +25,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 class MessageServiceTest {
 
+    private final MessageService messageService;
     private final MessageRepository messageRepository;
     private final MessageRoomRepository messageRoomRepository;
     private final MemberRepository memberRepository;
     private final OfferRepository offerRepository;
     private final ArticleRepository articleRepository;
 
+
     MessageServiceTest(
+            @Autowired MessageService messageService,
             @Autowired MessageRepository messageRepository,
             @Autowired MessageRoomRepository messageRoomRepository,
             @Autowired MemberRepository memberRepository,
             @Autowired OfferRepository offerRepository,
             @Autowired ArticleRepository articleRepository) {
+        this.messageService = messageService;
         this.messageRepository = messageRepository;
         this.messageRoomRepository = messageRoomRepository;
         this.memberRepository = memberRepository;
@@ -101,6 +105,24 @@ class MessageServiceTest {
                         .build());
 
         assertThat(messageRoomRepository.findById(messageRoom.getId()).get()).isEqualTo(messageRoom);
+    }
+
+    @Test
+    void sendMessageToOffererOnclickMessageButton() {
+        messageService.sendMessageToOffererOnclickMessageButton(
+                me.getId(), partner.getId(), offer.getId(), "판매자에게 거래 제안 메시지를 전송한다.");
+
+        MessageRoom offererMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                partner, me, offer).orElse(messageService.createMessageRoom(partner, me, offer)
+        );
+
+        MessageRoom myMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                me, partner, offer).orElse(messageService.createMessageRoom(me, partner, offer)
+        );
+
+        assertThat(offererMessageRoom.getMember()).isEqualTo(partner);
+        assertThat(myMessageRoom.getMember()).isEqualTo(me);
+
     }
 
 
