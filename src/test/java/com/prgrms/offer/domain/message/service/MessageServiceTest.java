@@ -44,9 +44,14 @@ class MessageServiceTest {
         this.articleRepository = articleRepository;
     }
 
+    private Member me;
+    private Member partner;
+    private Article article;
+    private Offer offer;
+
     @BeforeAll
     void setTestData() {
-        Member me = memberRepository.save(
+        me = memberRepository.save(
                 Member.builder()
                         .nickname("user1")
                         .oauthId(1L)
@@ -58,7 +63,7 @@ class MessageServiceTest {
                         .build()
         );
 
-        Member partner = memberRepository.save(
+        partner = memberRepository.save(
                 Member.builder()
                         .nickname("user2")
                         .oauthId(1L)
@@ -70,13 +75,13 @@ class MessageServiceTest {
                         .build()
         );
 
-        Article article = articleRepository.save(
+        article = articleRepository.save(
                 Article.builder(me, "당근", "팝니다", 1000)
                         .build()
         );
 
 
-        Offer offer = offerRepository.save(
+        offer = offerRepository.save(
                 Offer.builder()
                         .isSelected(false)
                         .price(1000)
@@ -88,11 +93,6 @@ class MessageServiceTest {
 
     @Test
     void createMessageRoom() {
-        Member me = memberRepository.findById(1L).orElseThrow();
-        Member partner = memberRepository.findById(2L).orElseThrow();
-
-        Offer offer = offerRepository.findById(1L).orElseThrow();
-
         MessageRoom messageRoom = messageRoomRepository.save(
                 MessageRoom.builder()
                         .member(me)
