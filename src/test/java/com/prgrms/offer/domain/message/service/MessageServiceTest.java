@@ -9,7 +9,9 @@ import com.prgrms.offer.domain.message.repository.MessageRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @Transactional
 class MessageServiceTest {
@@ -41,8 +44,8 @@ class MessageServiceTest {
         this.articleRepository = articleRepository;
     }
 
-    @Test
-    void createMessageRoom() {
+    @BeforeAll
+    void setTestData() {
         Member me = memberRepository.save(
                 Member.builder()
                         .nickname("user1")
@@ -81,6 +84,14 @@ class MessageServiceTest {
                         .offerer(partner)
                         .build()
         );
+    }
+
+    @Test
+    void createMessageRoom() {
+        Member me = memberRepository.findById(1L).orElseThrow();
+        Member partner = memberRepository.findById(2L).orElseThrow();
+
+        Offer offer = offerRepository.findById(1L).orElseThrow();
 
         MessageRoom messageRoom = messageRoomRepository.save(
                 MessageRoom.builder()
