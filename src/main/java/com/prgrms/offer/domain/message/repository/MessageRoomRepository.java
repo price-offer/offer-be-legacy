@@ -17,8 +17,7 @@ public interface MessageRoomRepository extends Repository<MessageRoom, Long> {
 
     MessageRoom save(MessageRoom messageRoom);
 
-    Optional<MessageRoom> findByMemberAndMessagePartnerAndArticle(Member me, Member partner,
-        Article artcile);
+    Optional<MessageRoom> findByMemberAndPartnerAndOffer(Member me, Member partner, Offer offer);
 
     Optional<MessageRoom> findById(long messageRoomId);
 
@@ -26,7 +25,7 @@ public interface MessageRoomRepository extends Repository<MessageRoom, Long> {
 
     Long countMessageRoomByMember(Member me);
 
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE MessageRoom mr SET mr.article = NULL WHERE mr.article = :article")
-    void doOnDeleteSetNullFromArticle(Article article);
+//    @Modifying(clearAutomatically = true)
+//    @Query("UPDATE MessageRoom mr SET mr.offer = NULL WHERE mr.offer = :offer")
+//    void doOnDeleteSetNullFromArticle(Article article);
 }

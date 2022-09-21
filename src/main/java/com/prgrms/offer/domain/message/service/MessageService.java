@@ -4,7 +4,6 @@ import com.prgrms.offer.common.message.ResponseMessage;
 import com.prgrms.offer.core.config.PropertyProvider;
 import com.prgrms.offer.core.error.exception.BusinessException;
 import com.prgrms.offer.domain.article.model.entity.Article;
-import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.message.model.dto.MessageContentResponse;
@@ -34,7 +33,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final MessageRoomRepository messageRoomRepository;
     private final MemberRepository memberRepository;
-    private final ArticleRepository articleRepository;
+    //private final ArticleRepository articleRepository;
     private final MessageConverter messageConverter;
     private final MessageRoomConverter messageRoomConverter;
     private final OfferRepository offerRepository;
@@ -44,7 +43,6 @@ public class MessageService {
     // 이미 보낸적 있는 사람에겐 채팅방 생성하지 않고 기존 채팅방 사용하기
     @Transactional
     public void sendMessageToOffererOnclickMessageButton(long receiverId, Long senderId,
-                                                         long articleId,
                                                          long offerId,
                                                          String content) {
 
@@ -53,26 +51,30 @@ public class MessageService {
 
         Member sender = memberRepository.getById(senderId);
 
-        Article article = articleRepository.findById(articleId)
-            .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
-
         Offer offer = offerRepository.findById(offerId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.OFFER_NOT_FOUND));
 
-        Boolean isMyMessageRoomExists = true;
-        Boolean isOffererMessageRoomExits = true;
+//        Article article = articleRepository.findById(offer.getArticle().getId())
+//                .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
+
+        Article article = offer.getArticle();
+
+//        TODO : messageRoom is_deleted=true 일때의 시나리오
+//        Boolean isMyMessageRoomExists = true;
+//        Boolean isOffererMessageRoomExits = true;
+
 
         // 쪽지버튼 눌러서 보낼때(최초 전송 이후)
         // messageRoom 찾아오는 쿼리메소드 간소화하기
 
-        MessageRoom myMessageRoom = messageRoomRepository.findByMemberAndMessagePartnerAndArticle(
-            sender, receiver, article).orElseGet(
-            () -> createMessageRoom(sender, receiver, article, isMyMessageRoomExists, offer)
+        MessageRoom myMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+            sender, receiver, offer).orElseGet(
+            () -> createMessageRoom(sender, receiver, offer)
         );
 
-        MessageRoom offererMessageRoom = messageRoomRepository.findByMemberAndMessagePartnerAndArticle(
-            receiver, sender, article).orElseGet(
-            () -> createMessageRoom(receiver, sender, article, isOffererMessageRoomExits, offer)
+        MessageRoom offererMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+            receiver, sender, offer).orElseGet(
+            () -> createMessageRoom(receiver, sender, offer)
         );
 
         Message myMessage = messageConverter.createMessage(true, content,
@@ -116,7 +118,7 @@ public class MessageService {
         isAuthenticatedUser(memberId, myMessageRoom);
 
         // 상대방이 대화방을 나간 상황
-        Member messagePartner = myMessageRoom.getMessagePartner();
+        Member messagePartner = myMessageRoom.getPartner();
 
         if (messagePartner == null) {
             throw new BusinessException(ResponseMessage.MEMBER_NOT_FOUND);
@@ -170,10 +172,10 @@ public class MessageService {
 
         isAuthenticatedUser(memberId, myMessageRoom);
 
-        Member messagePartner = myMessageRoom.getMessagePartner();
+        Member messagePartner = myMessageRoom.getPartner();
 
         Offer offer = myMessageRoom.getOffer();
-        Article article = myMessageRoom.getArticle();
+        Article article = offer.getArticle();
 
         long numMessageContent = messageRepository.countAllByMessageRoom(myMessageRoom);
 
@@ -185,12 +187,8 @@ public class MessageService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public MessageRoom createMessageRoom(Member member1, Member member2, Article article,
-        Boolean isMessageRoomExists, Offer offer) {
-        if (!isMessageRoomExists) {
-            isMessageRoomExists = !isMessageRoomExists;
-        }
-        return messageRoomRepository.save(new MessageRoom(member1, member2, article, offer));
+    public MessageRoom createMessageRoom(Member member1, Member member2, Offer offer) {
+        return messageRoomRepository.save(new MessageRoom(member1, member2, offer));
     }
 
     private Member isAuthenticatedUser(Long memberId, MessageRoom myMessageRoom) {
