@@ -55,11 +55,6 @@ public class MessageService {
         Offer offer = offerRepository.findById(offerId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.OFFER_NOT_FOUND));
 
-//        Article article = articleRepository.findById(offer.getArticle().getId())
-//                .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
-
-        Article article = offer.getArticle();
-
 //        TODO : messageRoom is_deleted=true 일때의 시나리오
 //        Boolean isMyMessageRoomExists = true;
 //        Boolean isOffererMessageRoomExits = true;
