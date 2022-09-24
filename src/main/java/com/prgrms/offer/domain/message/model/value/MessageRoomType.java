@@ -13,7 +13,7 @@ public enum MessageRoomType {
 
     private final String type;
 
-    public static String of(Boolean isBuyer) {
+    public static String of(boolean isBuyer) {
         return isBuyer ? PURCHASE.getType() : SALE.getType();
     }
 
