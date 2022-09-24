@@ -20,7 +20,7 @@ public class MessageRoomConverter {
 
     private final MessageRoomResponseComparator messageRoomComparator = new MessageRoomResponseComparator();
 
-    public MessageRoomResponse toMessageRoomResponse(MessageRoom messageRoom, Message message) {
+    public MessageRoomResponse toMessageRoomResponse(MessageRoom messageRoom, Message message, String messageRoomType) {
         Member messagePartner = messageRoom.getPartner();
         UserInfo userInfo = messagePartner != null ? UserInfo.createUserInfo(messagePartner)
             : UserInfo.createNullUserInfo();
@@ -29,6 +29,7 @@ public class MessageRoomConverter {
             .userInfo(userInfo)
             .productImageUrl(messageRoom.getOffer().getArticle().getMainImageUrl())
             .message(new MessageInfo(message.getContent(), message.getCreatedDate()))
+            .messageRoomType(messageRoomType)
             .messageRoomId(messageRoom.getId())
             .build();
     }
@@ -36,6 +37,7 @@ public class MessageRoomConverter {
     public Page<MessageRoomResponse> toMessageRoomResponsePage(
         List<MessageRoom> messageRoomList,
         List<Message> messageList,
+        List<String> messageTypeList,
         long numMessageRoom,
         Pageable pageable) {
 
@@ -43,10 +45,11 @@ public class MessageRoomConverter {
 
         Iterator<MessageRoom> messageRoomIterator = messageRoomList.listIterator();
         Iterator<Message> messageIterator = messageList.listIterator();
+        Iterator<String> messageTypeIterator = messageTypeList.listIterator();
 
         while (messageRoomIterator.hasNext()) {
             messageRoomResponseList.add(
-                toMessageRoomResponse(messageRoomIterator.next(), messageIterator.next())
+                toMessageRoomResponse(messageRoomIterator.next(), messageIterator.next(), messageTypeIterator.next())
             );
         }
 

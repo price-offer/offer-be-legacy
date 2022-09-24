@@ -13,6 +13,7 @@ import com.prgrms.offer.domain.message.model.dto.MessageRoomResponse;
 import com.prgrms.offer.domain.message.model.dto.OutgoingMessageResponse;
 import com.prgrms.offer.domain.message.model.entity.Message;
 import com.prgrms.offer.domain.message.model.entity.MessageRoom;
+import com.prgrms.offer.domain.message.model.value.MessageRoomType;
 import com.prgrms.offer.domain.message.repository.MessageRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
@@ -97,10 +98,12 @@ public class MessageService {
             messageRoom -> messageRepository.findTop1ByMessageRoomOrderByCreatedDateDesc(
                 messageRoom)).collect(Collectors.toList());
 
+        List<String> messageTypeList = messageRoomList.stream().map(messageRoom -> (MessageRoomType.of(messageRoom.getOffer().getOfferer().getId() == memberId))).toList();
+
         long numMessageRoom = messageRoomRepository.countMessageRoomByMember(me);
 
         Page<MessageRoomResponse> messageRoomResponsePage =
-            messageRoomConverter.toMessageRoomResponsePage(messageRoomList, messageList, numMessageRoom, pageable);
+            messageRoomConverter.toMessageRoomResponsePage(messageRoomList, messageList, messageTypeList, numMessageRoom, pageable);
 
         return messageRoomResponsePage;
     }

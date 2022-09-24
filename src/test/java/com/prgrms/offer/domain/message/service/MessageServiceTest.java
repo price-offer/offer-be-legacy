@@ -5,7 +5,10 @@ import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
 import com.prgrms.offer.domain.message.model.dto.MessageRoomInfoResponse;
+import com.prgrms.offer.domain.message.model.dto.MessageRoomResponse;
+import com.prgrms.offer.domain.message.model.entity.Message;
 import com.prgrms.offer.domain.message.model.entity.MessageRoom;
+import com.prgrms.offer.domain.message.model.value.MessageRoomType;
 import com.prgrms.offer.domain.message.repository.MessageRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
@@ -16,9 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -33,6 +39,7 @@ class MessageServiceTest {
     private final MemberRepository memberRepository;
     private final OfferRepository offerRepository;
     private final ArticleRepository articleRepository;
+    private final MessageRoomConverter messageRoomConverter;
 
 
     MessageServiceTest(
@@ -41,13 +48,15 @@ class MessageServiceTest {
             @Autowired MessageRoomRepository messageRoomRepository,
             @Autowired MemberRepository memberRepository,
             @Autowired OfferRepository offerRepository,
-            @Autowired ArticleRepository articleRepository) {
+            @Autowired ArticleRepository articleRepository,
+            @Autowired  MessageRoomConverter messageRoomConverter) {
         this.messageService = messageService;
         this.messageRepository = messageRepository;
         this.messageRoomRepository = messageRoomRepository;
         this.memberRepository = memberRepository;
         this.offerRepository = offerRepository;
         this.articleRepository = articleRepository;
+        this.messageRoomConverter = messageRoomConverter;
     }
 
     private Member me;
@@ -144,6 +153,31 @@ class MessageServiceTest {
         MessageRoomInfoResponse.OfferInfo offerInfo = MessageRoomInfoResponse.OfferInfo.createOfferInfo(offer);
 
         assertThat(messageRoomInfoResponse.getOfferInfo()).isEqualTo(offerInfo);
+    }
+
+    @DisplayName("MessageBox 조회")
+    @Test
+    void getMessageBox() {
+        messageService.sendMessageToOffererOnclickMessageButton(
+                me.getId(), partner.getId(), offer.getId(), "판매자에게 거래 제안 메시지를 전송한다.");
+
+        Page<MessageRoomResponse> myMessageRoomResponse = messageService.getMessageBox(me.getId(), Pageable.ofSize(1));
+        Page<MessageRoomResponse> partnerMessageRoomResponse = messageService.getMessageBox(partner.getId(), Pageable.ofSize(1));
+
+        MessageRoom myMessageRoom = messageRoomRepository.findByMemberId(me.getId(), Pageable.ofSize(1)).get(0);
+        MessageRoom partnerMessageRoom = messageRoomRepository.findByMemberId(partner.getId(), Pageable.ofSize(1)).get(0);
+
+        Message myMessage = messageRepository.findTop1ByMessageRoomOrderByCreatedDateDesc(myMessageRoom);
+        Message partnerMessage = messageRepository.findTop1ByMessageRoomOrderByCreatedDateDesc(partnerMessageRoom);
+
+        MessageRoomResponse myExpected = messageRoomConverter.toMessageRoomResponse(
+                myMessageRoom, myMessage, MessageRoomType.SALE.getType());
+        MessageRoomResponse partnerExpected = messageRoomConverter.toMessageRoomResponse(
+                partnerMessageRoom, partnerMessage, MessageRoomType.PURCHASE.getType());
+
+        assertThat(myMessageRoomResponse.stream().collect(Collectors.toList()).get(0).getMessageRoomType()).isEqualTo(MessageRoomType.SALE.getType());
+        assertThat(partnerMessageRoomResponse.stream().collect(Collectors.toList()).get(0).getMessageRoomType()).isEqualTo(MessageRoomType.PURCHASE.getType());
+
     }
 
 
