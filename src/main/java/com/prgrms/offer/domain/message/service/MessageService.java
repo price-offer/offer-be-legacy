@@ -93,7 +93,7 @@ public class MessageService {
             messageRoom -> messageRepository.findTop1ByMessageRoomOrderByCreatedDateDesc(
                 messageRoom)).collect(Collectors.toList());
 
-        List<String> messageTypeList = messageRoomList.stream().map(messageRoom -> (MessageRoomType.of(messageRoom.getOffer().getOfferer().getId() == memberId))).collect(Collectors.toList());
+        List<String> messageTypeList = messageRoomList.stream().map(messageRoom -> (MessageRoomType.of(memberId.equals(messageRoom.getOffer().getOfferer().getId())))).collect(Collectors.toList());
 
         long numMessageRoom = messageRoomRepository.countMessageRoomByMember(me);
 
