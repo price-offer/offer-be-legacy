@@ -4,12 +4,14 @@ import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
+import com.prgrms.offer.domain.message.model.dto.MessageRoomInfoResponse;
 import com.prgrms.offer.domain.message.model.entity.MessageRoom;
 import com.prgrms.offer.domain.message.repository.MessageRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
 import com.prgrms.offer.domain.offer.repository.OfferRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,6 +125,25 @@ class MessageServiceTest {
         assertThat(offererMessageRoom.getMember()).isEqualTo(partner);
         assertThat(myMessageRoom.getMember()).isEqualTo(me);
 
+    }
+
+
+    @DisplayName("대화방 정보 조회하기")
+    @Test
+    void getMessageRoomInfo() {
+
+        messageService.sendMessageToOffererOnclickMessageButton(
+                me.getId(), partner.getId(), offer.getId(), "판매자에게 거래 제안 메시지를 전송한다.");
+
+        MessageRoom myMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                me, partner, offer).orElse(messageService.createMessageRoom(me, partner, offer)
+        );
+
+        MessageRoomInfoResponse messageRoomInfoResponse = messageService.getMessageRoomInfo(myMessageRoom.getId(), me.getId());
+
+        MessageRoomInfoResponse.OfferInfo offerInfo = MessageRoomInfoResponse.OfferInfo.createOfferInfo(offer);
+
+        assertThat(messageRoomInfoResponse.getOfferInfo()).isEqualTo(offerInfo);
     }
 
 
