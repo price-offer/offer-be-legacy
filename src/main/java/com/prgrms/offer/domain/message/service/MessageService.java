@@ -13,6 +13,7 @@ import com.prgrms.offer.domain.message.model.dto.MessageRoomResponse;
 import com.prgrms.offer.domain.message.model.dto.OutgoingMessageResponse;
 import com.prgrms.offer.domain.message.model.entity.Message;
 import com.prgrms.offer.domain.message.model.entity.MessageRoom;
+import com.prgrms.offer.domain.message.model.value.MessageRoomType;
 import com.prgrms.offer.domain.message.repository.MessageRepository;
 import com.prgrms.offer.domain.message.repository.MessageRoomRepository;
 import com.prgrms.offer.domain.offer.model.entity.Offer;
@@ -54,11 +55,6 @@ public class MessageService {
         Offer offer = offerRepository.findById(offerId)
             .orElseThrow(() -> new BusinessException(ResponseMessage.OFFER_NOT_FOUND));
 
-//        Article article = articleRepository.findById(offer.getArticle().getId())
-//                .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
-
-        Article article = offer.getArticle();
-
 //        TODO : messageRoom is_deleted=true 일때의 시나리오
 //        Boolean isMyMessageRoomExists = true;
 //        Boolean isOffererMessageRoomExits = true;
@@ -97,10 +93,12 @@ public class MessageService {
             messageRoom -> messageRepository.findTop1ByMessageRoomOrderByCreatedDateDesc(
                 messageRoom)).collect(Collectors.toList());
 
+        List<String> messageTypeList = messageRoomList.stream().map(messageRoom -> (MessageRoomType.of(memberId.equals(messageRoom.getOffer().getOfferer().getId())))).collect(Collectors.toList());
+
         long numMessageRoom = messageRoomRepository.countMessageRoomByMember(me);
 
         Page<MessageRoomResponse> messageRoomResponsePage =
-            messageRoomConverter.toMessageRoomResponsePage(messageRoomList, messageList, numMessageRoom, pageable);
+            messageRoomConverter.toMessageRoomResponsePage(messageRoomList, messageList, messageTypeList, numMessageRoom, pageable);
 
         return messageRoomResponsePage;
     }

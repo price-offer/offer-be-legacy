@@ -20,6 +20,8 @@ public class MessageRoomResponse {
 
     private Long messageRoomId;
 
+    private String messageRoomType;
+
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public static class UserInfo {
 
