@@ -16,6 +16,7 @@ public class MessageRoomInfoResponse  {
     private MessagePartnerInfo messagePartnerInfo;
     private OfferInfo offerInfo;
     private long lastPageOfMessageContents;
+    private long numNotReadMessage;
 
     @AllArgsConstructor
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)

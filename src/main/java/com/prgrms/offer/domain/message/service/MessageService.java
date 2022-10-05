@@ -122,8 +122,10 @@ public class MessageService {
             throw new BusinessException(ResponseMessage.MEMBER_NOT_FOUND);
         }
 
-        MessageRoom receiverMessageRoom = messageRoomRepository.findByMemberAndOffer(
-                messagePartner, myMessageRoom.getOffer())
+        Member me = myMessageRoom.getMember();
+
+        MessageRoom receiverMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                messagePartner, me, myMessageRoom.getOffer())
             .orElseThrow(
                 () -> new BusinessException(ResponseMessage.MESSAGE_PARTNER_EXITED_MESSAGE_ROOM));
 
@@ -157,7 +159,9 @@ public class MessageService {
 
         Page<Message> messageContentPage = messageRepository.findByMessageRoomOrderByMessageIdAsc(
             myMessageRoom, pageable);
-        long numMessage = messageRepository.countAllByMessageRoom(myMessageRoom);
+
+        long numMessage = messageRepository.countByMessageRoomAndIsSendMessage(myMessageRoom, false);
+        myMessageRoom.setNumReadMessage(numMessage);
 
         return messageContentPage.map(message -> messageConverter.toMessageContentResponsePage(message));
     }
@@ -176,12 +180,14 @@ public class MessageService {
         Article article = offer.getArticle();
 
         long numMessageContent = messageRepository.countAllByMessageRoom(myMessageRoom);
+        long numReceivedMessageContent = messageRepository.countByMessageRoomAndIsSendMessage(myMessageRoom, false);
+        long numNotReadMessage = numReceivedMessageContent - myMessageRoom.getNumReadMessage();
 
         long lastPageOfMessageContents = (long) Math.ceil(
             numMessageContent / propertyProvider.getREQURIED_CONTENTS_SIZE());
 
         return messageConverter.toMessageRoomInfoResponse(messagePartner, article, offer,
-            lastPageOfMessageContents);
+            lastPageOfMessageContents, numNotReadMessage);
     }
 
     @Transactional(propagation = Propagation.MANDATORY)

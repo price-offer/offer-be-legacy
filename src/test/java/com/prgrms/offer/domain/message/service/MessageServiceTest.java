@@ -4,6 +4,7 @@ import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.repository.ArticleRepository;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
+import com.prgrms.offer.domain.message.model.dto.MessageRequest;
 import com.prgrms.offer.domain.message.model.dto.MessageRoomInfoResponse;
 import com.prgrms.offer.domain.message.model.dto.MessageRoomResponse;
 import com.prgrms.offer.domain.message.model.entity.Message;
@@ -104,6 +105,9 @@ class MessageServiceTest {
                         .offerer(partner)
                         .build()
         );
+
+        System.out.println("1\n11f\n"+messageRoomRepository.countMessageRoomByMember(partner));
+
     }
 
     @Test
@@ -180,5 +184,51 @@ class MessageServiceTest {
 
     }
 
+    @DisplayName("대화방의 안읽은 메시지 개수를 반환한다")
+    @Test
+    void getNotReadMessageCount() {
+
+        messageService.sendMessageToOffererOnclickMessageButton(
+                me.getId(), partner.getId(), offer.getId(), "판매자에게 거래 제안 메시지를 전송한다.");
+
+        MessageRoom articleWriterMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                me, partner, offer).orElseGet(()->messageService.createMessageRoom(me, partner, offer)
+        );
+        MessageRoom offererMessageRoom = messageRoomRepository.findByMemberAndPartnerAndOffer(
+                partner, me, offer).orElseGet(()->messageService.createMessageRoom(partner, me, offer)
+        );
+
+        assertThat(articleWriterMessageRoom.getNumReadMessage()).isEqualTo(0L);
+        assertThat(offererMessageRoom.getNumReadMessage()).isEqualTo(0L);
+
+        messageService.getMessageRoomContents(articleWriterMessageRoom.getId(), me.getId(), Pageable.ofSize(1));
+        assertThat(articleWriterMessageRoom.getNumReadMessage()).isEqualTo(1L);
+        assertThat(offererMessageRoom.getNumReadMessage()).isEqualTo(0L);
+
+        messageService.sendMessage(offererMessageRoom.getId(), new MessageRequest("offerer->게시자 두번째 메시지"), partner.getId());
+        messageService.sendMessage(offererMessageRoom.getId(), new MessageRequest("offerer->게시자 세번째 메시지"), partner.getId());
+
+        assertThat(articleWriterMessageRoom.getNumReadMessage()).isEqualTo(1L);
+        assertThat(offererMessageRoom.getNumReadMessage()).isEqualTo(0L);
+
+        messageService.sendMessage(articleWriterMessageRoom.getId(), new MessageRequest("게시자 -> partner 첫번째 메시지"), me.getId());
+        MessageRoomInfoResponse articleWriterMessageRoomInfoResponse = messageService.getMessageRoomInfo(articleWriterMessageRoom.getId(), me.getId());
+        MessageRoomInfoResponse offererMessageRoomInfoResponse = messageService.getMessageRoomInfo(offererMessageRoom.getId(), partner.getId());
+
+        assertThat(articleWriterMessageRoomInfoResponse.getNumNotReadMessage()).isEqualTo(2L);
+        assertThat(offererMessageRoomInfoResponse.getNumNotReadMessage()).isEqualTo(1L);
+
+        messageService.getMessageRoomContents(articleWriterMessageRoom.getId(), me.getId(), Pageable.ofSize(1));
+        messageService.getMessageRoomContents(offererMessageRoom.getId(), partner.getId(), Pageable.ofSize(1));
+
+        assertThat(articleWriterMessageRoom.getNumReadMessage()).isEqualTo(3L);
+        assertThat(offererMessageRoom.getNumReadMessage()).isEqualTo(1L);
+
+        MessageRoomInfoResponse articleWriterMessageRoomInfoResponse2 = messageService.getMessageRoomInfo(articleWriterMessageRoom.getId(), me.getId());
+        MessageRoomInfoResponse offererMessageRoomInfoResponse2 = messageService.getMessageRoomInfo(offererMessageRoom.getId(), partner.getId());
+
+        assertThat(articleWriterMessageRoomInfoResponse2.getNumNotReadMessage()).isEqualTo(0L);
+        assertThat(offererMessageRoomInfoResponse2.getNumNotReadMessage()).isEqualTo(0L);
+    }
 
 }

@@ -44,12 +44,13 @@ public class MessageConverter {
     }
 
     public MessageRoomInfoResponse toMessageRoomInfoResponse(Member messagePartner, Article article,
-        Offer offer, long lastPageOfMessageContents) {
+        Offer offer, long lastPageOfMessageContents, long numNotReadMessage) {
         return new MessageRoomInfoResponse(
             MessageRoomInfoResponse.ArticleInfo.createArticleInfo(article),
             MessageRoomInfoResponse.MessagePartnerInfo.createMessagePartnerInfo(messagePartner),
             MessageRoomInfoResponse.OfferInfo.createOfferInfo(offer),
-            lastPageOfMessageContents
+            lastPageOfMessageContents,
+            numNotReadMessage
         );
     }
 

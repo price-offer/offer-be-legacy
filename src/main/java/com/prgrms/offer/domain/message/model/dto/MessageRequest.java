@@ -10,6 +10,10 @@ public class MessageRequest {
     @Size(min = 1, max = 100, message = DtoValidationMessage.IVALID_MESSAGE_LENGTH)
     private String content;
 
+    public MessageRequest(String content) {
+        this.content = content;
+    }
+
     public String getContent() {
         return content;
     }

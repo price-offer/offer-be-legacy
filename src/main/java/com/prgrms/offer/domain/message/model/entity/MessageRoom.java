@@ -38,6 +38,8 @@ public class MessageRoom {
     @JoinColumn(name = "offer_id")
     private Offer offer;
 
+    private long numReadMessage;
+
     private LocalDateTime createdDate;
 
     public MessageRoom(Member member, Member partner, Offer offer) {
@@ -45,6 +47,10 @@ public class MessageRoom {
         this.partner = partner;
         createdDate = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
         this.offer = offer;
+    }
+
+    public void setNumReadMessage(long cnt) {
+        this.numReadMessage = cnt;
     }
 
 }
