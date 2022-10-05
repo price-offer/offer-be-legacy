@@ -16,4 +16,6 @@ public interface MessageRepository extends Repository<Message, Long> {
 
     Long countAllByMessageRoom(MessageRoom messageRoom);
 
+    Long countByMessageRoomAndIsSendMessage(MessageRoom messageRoom, boolean isSendMessage);
+
 }

@@ -21,8 +21,6 @@ public interface MessageRoomRepository extends Repository<MessageRoom, Long> {
 
     Optional<MessageRoom> findById(long messageRoomId);
 
-    Optional<MessageRoom> findByMemberAndOffer(Member messagePartner, Offer offer);
-
     Long countMessageRoomByMember(Member me);
 
 //    @Modifying(clearAutomatically = true)
