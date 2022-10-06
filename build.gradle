@@ -198,12 +198,12 @@ jacocoTestCoverageVerification {
 //                minimum = 0.00
 //            }
 
-            // TODO: 라인 커버리지 최소한 80%
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.00
-            }
+//            // TODO: 라인 커버리지 최소한 80%
+//            limit {
+//                counter = 'LINE'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.00
+//            }
 
             // 커버리지 체크를 제외할 클래스들
             excludes = [
