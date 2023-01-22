@@ -1,0 +1,52 @@
+name: Deploy to Dev Server
+
+on:
+  push:
+    branches: [ "test" ]
+
+permissions:
+  contents: read
+
+env:
+  DOCKER_FILE: docker/Dockerfile-dev
+
+jobs:
+  build_and_deploy_to_dev:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      ## checkout and setup jdk
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'corretto'
+
+      ## gradle caching
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      ## gradle build without test jar
+      - name: Build with Gradle
+        run: ./gradlew clean build # -x test
+        shell: bash
+
+      ## docker build & push to hub
+      - name: Docker build & push to hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          
+          REPO_OFFER_DEV=${{ secrets.DOCKER_USERNAME }}/offer-dev
+          IMG_OFFER_DEV=${REPO_OFFER_DEV}:latest
+          
+          docker build . -t ${IMG_OFFER_DEV} -f ${DOCKER_FILE}
+          docker push ${IMG_OFFER_DEV}
