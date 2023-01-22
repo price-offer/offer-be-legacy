@@ -1,9 +1,6 @@
 FROM amazoncorretto:11
 LABEL maintainer="Jihun Hwang <goharrm@gmail.com>"
 
-RUN yum update -y \
-    && yum install -y procps \
-
 EXPOSE 7070
 VOLUME ["/var/log"]
 
