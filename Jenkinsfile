@@ -1,6 +1,7 @@
 def maindir = "."
 def dockerRepo = "goharrm/offer-dev"
 def NEW_TAG = "latest"
+def LATEST = "latest"
 
 pipeline {
     agent any
@@ -39,7 +40,7 @@ pipeline {
                     cd ${maindir}
                     
                     NEW_IMAGE="${dockerRepo}:${NEW_TAG}"
-                    LATEST_IMAGE="${dockerRepo}:latest"
+                    LATEST_IMAGE="${dockerRepo}:${LATEST}"
                     
                     BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
                     DOCKER_FILE=docker/Dockerfile-dev
