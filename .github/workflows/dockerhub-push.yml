@@ -37,7 +37,7 @@ jobs:
 
       ## gradle build without test jar
       - name: Build with Gradle
-        run: ./gradlew clean build # -x test
+        run: ./gradlew clean build -x test
         shell: bash
 
       ## docker build & push to hub

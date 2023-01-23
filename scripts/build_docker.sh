@@ -2,7 +2,7 @@
 
 VERSION=$(git log -1 --pretty=%h)
 REPO=$1
-TAG="${$REPO}:${$VERSION}"
+TAG="${REPO}:${VERSION}"
 LATEST="${REPO}:latest"
 BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
 DOCKER_FILE=docker/Dockerfile-dev
