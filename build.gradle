@@ -115,12 +115,12 @@ bootJar {
     dependsOn displaceDocument
 }
 
-processResources.dependsOn('copySecret')
-
-task copySecret(type: Copy) {
-    from '../offer-be/be-submodule'
-    into 'src/main/resources'
-}
+//processResources.dependsOn('copySecret')
+//
+//task copySecret(type: Copy) {
+//    from '../offer-be/be-submodule'
+//    into 'src/main/resources'
+//}
 
 
 // querydsl 적용

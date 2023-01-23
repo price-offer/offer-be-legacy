@@ -1,17 +1,17 @@
-name: Deploy to Production Server
+name: Deploy to Dev Server
 
 on:
   push:
-    branches: [ "release" ]
+    branches: [ "test" ]
 
 permissions:
   contents: read
 
 env:
-  DOCKER_FILE: docker/Dockerfile-prod
+  DOCKER_FILE: docker/Dockerfile-dev
 
 jobs:
-  build_and_deploy_to_prod:
+  build_and_deploy_to_dev:
 
     runs-on: ubuntu-latest
 
@@ -37,7 +37,7 @@ jobs:
 
       ## gradle build without test jar
       - name: Build with Gradle
-        run: ./gradlew clean build # -x test
+        run: ./gradlew clean build # -x test 
         shell: bash
 
       ## docker build & push to hub
@@ -45,20 +45,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           
-          REPO_OFFER_PROD=${{ secrets.DOCKER_USERNAME }}/offer-prod
-          IMG_OFFER_PROD=${REPO_OFFER_PROD}:latest
+          REPO_OFFER_DEV=${{ secrets.DOCKER_USERNAME }}/offer-dev
           
-          docker build . -t ${IMG_OFFER_PROD} -f ${DOCKER_FILE}
-          docker push ${IMG_OFFER_PROD}
-          
-      ## deploy to CD server with SSH
-      - name: Deploy to CD with SSH
-        uses: appleboy/ssh-action@master
-        id: deploy-prod
-        with:
-          host: ${{ secrets.HOST_PROD }}
-          username: ${{ secrets.AWS_EC2_USERNAME }}
-          key: ${{ secrets.AWS_SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            /home/github/offer-script/deploy-prod.sh
+          chmod +x ./scripts/build_docker.sh
+          ./scripts/build_docker.sh ${REPO_OFFER_DEV}
