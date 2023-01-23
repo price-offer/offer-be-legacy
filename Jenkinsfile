@@ -64,6 +64,7 @@ pipeline {
                 sh """
                     if [ ! -e ~/offer-rollout ]; then 
                       mkdir ~/offer-rollout 
+                      cd ~/offer-rollout
                       git clone git@github.com:price-offer/application-manifests.git
                     fi
 
