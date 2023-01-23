@@ -1,5 +1,13 @@
 FROM amazoncorretto:11
+
+ARG VERSION
+ENV VERSION $VERSION
+ARG BUILD_TIMESTAMP
+ENV BUILD_TIMESTAMP $BUILD_TIMESTAMP
+
 LABEL maintainer="Jihun Hwang <goharrm@gmail.com>"
+LABEL version="$VERSION"
+LABEL description="build at $BUILD_TIMESTAMP"
 
 EXPOSE 7070
 VOLUME ["/var/log"]

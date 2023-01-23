@@ -46,7 +46,6 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           
           REPO_OFFER_DEV=${{ secrets.DOCKER_USERNAME }}/offer-dev
-          IMG_OFFER_DEV=${REPO_OFFER_DEV}:latest
           
-          docker build . -t ${IMG_OFFER_DEV} -f ${DOCKER_FILE}
-          docker push ${IMG_OFFER_DEV}
+          chmod +x ./scripts/build_docker.sh
+          ./scripts/build_docker.sh ${REPO_OFFER_DEV}
