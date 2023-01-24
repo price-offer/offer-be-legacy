@@ -36,7 +36,7 @@ pipeline {
                         ./gradlew jib \
                             -Djib.to.auth.username=${USERNAME} \
                             -Djib.to.auth.password=${PASSWORD} \
-                            -Djib.to.image="${dockerRepo}:${NEW_TAG}" \
+                            -Djib.to.image=${dockerRepo}:${NEW_TAG} \
                             -Djib.console='plain'
 
                         sleep 10
