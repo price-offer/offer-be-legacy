@@ -24,8 +24,7 @@ pipeline {
         }
         stage('Get new image tag from commit hash') {
             steps {
-                def newTag = sh(script: 'git log -1 --pretty=%h"', returnStdout: true).trim()
-                NEW_TAG = newTag
+                NEW_TAG = sh(script: 'git log -1 --pretty=%h"', returnStdout: true).trim()
             }
         }
         stage('Docker image build & push') {
