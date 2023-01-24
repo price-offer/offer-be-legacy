@@ -32,32 +32,16 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubRegistryCredential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh "docker login -u $USERNAME -p $PASSWORD"
-                    }
-                }
-
-                script{
-                    sh '''
-                        cd ${maindir}
-
-                        NEW_IMAGE="${dockerRepo}:${NEW_TAG}"
-                        LATEST_IMAGE="${dockerRepo}:${LATEST}"
-
-                        BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
-                        DOCKER_FILE=docker/Dockerfile-dev
-
-                        sudo docker build \
-                            -t "${NEW_IMAGE}" \
-                            -t "${LATEST_IMAGE}" \
-                            --build-arg VERSION="${NEW_TAG}" \
-                            --build-arg BUILD_TIMESTAMP="${BUILD_TIMESTAMP}" \
-                            -f "${DOCKER_FILE}" .
-
-                        docker push "${NEW_IMAGE}"
-                        docker push "${LATEST_IMAGE}"
+                        sh '''
+                        ./gradlew jib \
+                            -Djib.to.auth.username=${USERNAME} \
+                            -Djib.to.auth.password=${PASSWORD} \
+                            -Djib.to.image=${dockerRepo}:${NEW_TAG} \
+                            -Djib.console='plain'
 
                         sleep 10
-                '''
+                        '''
+                    }
                 }
             }
         }
