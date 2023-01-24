@@ -24,7 +24,9 @@ pipeline {
         }
         stage('Get new image tag from commit hash') {
             steps {
-                NEW_TAG = sh(script: 'git log -1 --pretty=%h"', returnStdout: true).trim()
+                script{
+                    NEW_TAG = sh(script: 'git log -1 --pretty=%h"', returnStdout: true).trim()
+                }
             }
         }
         stage('Docker image build & push') {
@@ -35,27 +37,29 @@ pipeline {
                     }
                 }
 
-                sh '''
-                    cd ${maindir}
-                    
-                    NEW_IMAGE="${dockerRepo}:${NEW_TAG}"
-                    LATEST_IMAGE="${dockerRepo}:${LATEST}"
-                    
-                    BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
-                    DOCKER_FILE=docker/Dockerfile-dev
-    
-                    sudo docker build \
-                        -t "${NEW_IMAGE}" \
-                        -t "${LATEST_IMAGE}" \
-                        --build-arg VERSION="${NEW_TAG}" \
-                        --build-arg BUILD_TIMESTAMP="${BUILD_TIMESTAMP}" \
-                        -f "${DOCKER_FILE}" .
-    
-                    docker push "${NEW_IMAGE}"
-                    docker push "${LATEST_IMAGE}"
-                    
-                    sleep 10
+                script{
+                    sh '''
+                        cd ${maindir}
+
+                        NEW_IMAGE="${dockerRepo}:${NEW_TAG}"
+                        LATEST_IMAGE="${dockerRepo}:${LATEST}"
+
+                        BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
+                        DOCKER_FILE=docker/Dockerfile-dev
+
+                        sudo docker build \
+                            -t "${NEW_IMAGE}" \
+                            -t "${LATEST_IMAGE}" \
+                            --build-arg VERSION="${NEW_TAG}" \
+                            --build-arg BUILD_TIMESTAMP="${BUILD_TIMESTAMP}" \
+                            -f "${DOCKER_FILE}" .
+
+                        docker push "${NEW_IMAGE}"
+                        docker push "${LATEST_IMAGE}"
+
+                        sleep 10
                 '''
+                }
             }
         }
         stage('Argo Rollout Manifest Update') {
