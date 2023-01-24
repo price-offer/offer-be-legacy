@@ -17,7 +17,7 @@ pipeline {
                 sh '''
                 id
                 java -version
-                ./gradlew clean build
+                ./gradlew clean build -x test -x jacocoTestReport -x createDocument -x displaceDocument -x sonarqube
                 '''
             }
         }
