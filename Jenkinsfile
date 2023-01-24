@@ -56,7 +56,7 @@ pipeline {
                         fi
 
                         cd ~/offer-rollout/application-manifests
-                        sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
+                        sed -i "s/offer-dev:.*\$/offer-dev:${NEW_TAG}/g" ./services/offer-be-rollout/rollout.yaml
 
                         git config --global user.email "goharrm@gmail.com"
                         git config --global user.name "Jihun-Hwang"
