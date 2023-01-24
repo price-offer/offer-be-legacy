@@ -1,7 +1,4 @@
 def maindir = "."
-def dockerRepo = "goharrm/offer-dev"
-def NEW_TAG = "latest"
-def LATEST = "latest"
 
 pipeline {
     agent any
@@ -19,13 +16,6 @@ pipeline {
                 java -version
                 ./gradlew clean build -x test -x jacocoTestReport -x createDocument -x displaceDocument -x sonarqube
                 '''
-            }
-        }
-        stage('Get new image tag from commit hash') {
-            steps {
-                script{
-                    NEW_TAG = sh(script: 'git log -1 --pretty=%h', returnStdout: true).trim()
-                }
             }
         }
         stage('Docker image build & push') {
@@ -61,8 +51,11 @@ pipeline {
                       git pull
                     fi
 
+                    NEW_TAG=$(git log -1 --pretty=%h)
+
                     cd ~/offer-rollout/application-manifests
                     sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
+
                     git add ./services/offer-be-rollout/rollout.yaml
                     git commit -m "[FROM Jenkins] Container Image Tag was changed to ${NEW_TAG}"
                     git push
