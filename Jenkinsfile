@@ -33,11 +33,14 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerHubRegistryCredential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh '''
+                        NEW_TAG=$(git log -1 --pretty=%h)
+                        dockerRepo="goharrm/offer-dev"
+
                         ./gradlew jib \
-                            -Djib.to.auth.username=${USERNAME} \
-                            -Djib.to.auth.password=${PASSWORD} \
-                            -Djib.to.image=${dockerRepo}:${NEW_TAG} \
-                            -Djib.console='plain'
+                        -Djib.to.auth.username=${USERNAME} \
+                        -Djib.to.auth.password=${PASSWORD} \
+                        -Djib.to.image=${dockerRepo}:${NEW_TAG} \
+                        -Djib.console='plain'
 
                         sleep 10
                         '''

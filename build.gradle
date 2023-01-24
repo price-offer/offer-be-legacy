@@ -108,8 +108,8 @@ task createDocument(type: Copy) {
 task displaceDocument(type: Copy) {
     dependsOn asciidoctor
 
-    from ("${asciidoctor.outputDir}")
-    into ("build/resources/main/static")
+    from("${asciidoctor.outputDir}")
+    into("build/resources/main/static")
 }
 
 bootJar {
@@ -224,26 +224,20 @@ jib {
     from {
         image = 'adoptopenjdk/openjdk11:alpine-jre'
     }
-//    to {  // docker image 빌드 후 push할 레포지토리 경로
-//        image = 'goharrm/ci-test'  // url이 없으면 default로 docker hub에 push
-//        tags = ['1.0']
-//    }
     container {
         entrypoint = ['java', '-jar', 'offer-0.0.1-SNAPSHOT.jar']
-        // mainClass = 'com.test.StartApplication'
         jvmFlags = [' -Xms512m', '-Xmx512m', '-Xdebug', '-XshowSettings: vm', '-XX: +UnlockExperimentalVMOptions', '-XX:+UseContainerSupport']
-        ports = ['7070']  // 컨테이너 포트
+        ports = ['7070']
 
         environment = [SPRING_OUTPUT_ANSI_ENABLED: "ALWAYS"]
         labels = [Iversion: project.version, name: project.name, group: project.group]
 
-//        creationTime = 'USE CURRENT TIMESTAMP'  // 컨테이너 빌드시 시간
-        format = 'Docker'  // 컨테이너가 도커 포맷임
+        format = 'Docker'
     }
     extraDirectories {
-        paths { // 특정 path에서 특정 file을 가져오기 위해 명시
+        paths {
             path {
-                from = file('build/libs')  // build/libs 아래 생성된 jar 파일을 가져와서 위 entrypoint에서 실행되도록 함
+                from = file('build/libs')
             }
         }
     }
