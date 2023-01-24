@@ -42,6 +42,7 @@ pipeline {
             steps {
                 sshagent(credentials : ["offer-jenkins"]) {
                     sh '''
+                        NEW_TAG=$(git log -1 --pretty=%h)
                         MAIN_PATH=$(pwd)
 
                         if [ ! -e ~/offer-rollout/application-manifests ];
@@ -53,8 +54,6 @@ pipeline {
                           cd ~/offer-rollout/application-manifests
                           git pull
                         fi
-
-                        NEW_TAG=$(git log -1 --pretty=%h)
 
                         cd ~/offer-rollout/application-manifests
                         sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
