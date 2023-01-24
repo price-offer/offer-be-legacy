@@ -15,7 +15,6 @@ pipeline {
         stage('Build Source Code') {
             steps {
                 sh '''
-                cd ${maindir}
                 id
                 java -version
                 ./gradlew clean build
