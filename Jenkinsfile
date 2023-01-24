@@ -40,28 +40,30 @@ pipeline {
         }
         stage('Argo Rollout Manifest Update') {
             steps {
-                sh '''
-                    if [ ! -e ~/offer-rollout ]; 
-                    then
-                      mkdir ~/offer-rollout 
-                      cd ~/offer-rollout
-                      git clone git@github.com:price-offer/application-manifests.git
-                    else
-                      cd ~/offer-rollout/application-manifests
-                      git pull
-                    fi
+                sshagent(credentials : ["offer-jenkins"]) {
+                    sh '''
+                        if [ ! -e ~/offer-rollout/application-manifests ];
+                        then
+                          mkdir ~/offer-rollout
+                          cd ~/offer-rollout
+                          git clone git@github.com:price-offer/application-manifests.git
+                        else
+                          cd ~/offer-rollout/application-manifests
+                          git pull
+                        fi
 
-                    NEW_TAG=$(git log -1 --pretty=%h)
+                        NEW_TAG=$(git log -1 --pretty=%h)
 
-                    cd ~/offer-rollout/application-manifests
-                    sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
+                        cd ~/offer-rollout/application-manifests
+                        sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
 
-                    git add ./services/offer-be-rollout/rollout.yaml
-                    git commit -m "[FROM Jenkins] Container Image Tag was changed to ${NEW_TAG}"
-                    git push
-                    cd ..
-                    cd ..
-                '''
+                        git add ./services/offer-be-rollout/rollout.yaml
+                        git commit -m "[FROM Jenkins] Container Image Tag was changed to ${NEW_TAG}"
+                        git push
+                        cd ..
+                        cd ..
+                    '''
+                }
             }
         }
     }
