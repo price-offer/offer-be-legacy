@@ -42,9 +42,11 @@ pipeline {
             steps {
                 sshagent(credentials : ["offer-jenkins"]) {
                     sh '''
+                        MAIN_PATH=$(pwd)
+
                         if [ ! -e ~/offer-rollout/application-manifests ];
                         then
-                          mkdir ~/offer-rollout
+                          mkdir -p ~/offer-rollout
                           cd ~/offer-rollout
                           git clone git@github.com:price-offer/application-manifests.git
                         else
@@ -60,8 +62,7 @@ pipeline {
                         git add ./services/offer-be-rollout/rollout.yaml
                         git commit -m "[FROM Jenkins] Container Image Tag was changed to ${NEW_TAG}"
                         git push
-                        cd ..
-                        cd ..
+                        cd $MAIN_PATH
                     '''
                 }
             }
