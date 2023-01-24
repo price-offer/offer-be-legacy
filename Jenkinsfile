@@ -58,14 +58,14 @@ pipeline {
                         cd ~/offer-rollout/application-manifests
                         sed -i 's/offer-dev:.*\$/offer-dev:${NEW_TAG}/g' ./services/offer-be-rollout/rollout.yaml
 
-                        git config --global user.email "goharrm@example.com"
-                        git config --global user.name "Jihun-Hwang
+                        git config --global user.email "goharrm@gmail.com"
+                        git config --global user.name "Jihun-Hwang"
 
                         git add ./services/offer-be-rollout/rollout.yaml
                         git commit -m "[FROM Jenkins] Container Image Tag was changed to ${NEW_TAG}"
                         git push
                         cd $MAIN_PATH
-                        
+
                     '''
                 }
             }
