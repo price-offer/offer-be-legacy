@@ -14,12 +14,12 @@ pipeline {
         }
         stage('Build Source Code') {
             steps {
-                sh """
+                sh '''
                 cd ${maindir}
                 id
                 java -version
                 ./gradlew clean build
-                """
+                '''
             }
         }
         stage('Get new image tag from commit hash') {
@@ -31,12 +31,12 @@ pipeline {
         stage('Docker image build & push') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerHubRegistryCredential', user: 'USERNAME', passwd: 'PASSWORD')]) {
-                        sh "docker login -u ${user} -p ${passwd}"
+                    withCredentials([usernamePassword(credentialsId: 'dockerHubRegistryCredential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh "docker login -u $USERNAME -p $PASSWORD"
                     }
                 }
 
-                sh """
+                sh '''
                     cd ${maindir}
                     
                     NEW_IMAGE="${dockerRepo}:${NEW_TAG}"
@@ -56,12 +56,12 @@ pipeline {
                     docker push "${LATEST_IMAGE}"
                     
                     sleep 10
-                """
+                '''
             }
         }
         stage('Argo Rollout Manifest Update') {
             steps {
-                sh """
+                sh '''
                     if [ ! -e ~/offer-rollout ]; 
                     then
                       mkdir ~/offer-rollout 
@@ -79,7 +79,7 @@ pipeline {
                     git push
                     cd ..
                     cd ..
-                """
+                '''
             }
         }
     }
