@@ -62,10 +62,14 @@ pipeline {
         stage('Argo Rollout Manifest Update') {
             steps {
                 sh """
-                    if [ ! -e ~/offer-rollout ]; then 
+                    if [ ! -e ~/offer-rollout ]; 
+                    then
                       mkdir ~/offer-rollout 
                       cd ~/offer-rollout
                       git clone git@github.com:price-offer/application-manifests.git
+                    else
+                      cd ~/offer-rollout/application-manifests
+                      git pull
                     fi
 
                     cd ~/offer-rollout/application-manifests
