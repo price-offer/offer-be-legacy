@@ -24,7 +24,7 @@ pipeline {
         stage('Get new image tag from commit hash') {
             steps {
                 script{
-                    NEW_TAG = sh(script: 'git log -1 --pretty=%h"', returnStdout: true).trim()
+                    NEW_TAG = sh(script: 'git log -1 --pretty=%h', returnStdout: true).trim()
                 }
             }
         }
