@@ -1,6 +1,5 @@
 package com.prgrms.offer.domain.article.model.entity;
 
-import com.prgrms.offer.domain.member.model.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
