@@ -93,7 +93,6 @@ public class ArticleConverter {
                 .mainImageUrl(request.getImageUrls() == null || request.getImageUrls().isEmpty() ? null : request.getImageUrls().get(0))
                 .createdDate(LocalDateTime.now())
                 .modifiedDate(LocalDateTime.now())
-                .viewCount(0)
                 .build();
     }
 
@@ -151,7 +150,6 @@ public class ArticleConverter {
                 .modifiedDate(article.getModifiedDate())
                 .likeCount(article.getLikeCount())
                 .isLiked(isLiked)
-                .viewCount(article.getViewCount())
                 .build();
 
         return new ArticleDetailResponse(articleDto);

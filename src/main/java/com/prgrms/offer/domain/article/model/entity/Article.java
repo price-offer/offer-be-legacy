@@ -79,9 +79,6 @@ public class Article {
     @Column(name = "price", nullable = false)
     private int price;
 
-    @Column(name = "view_count")
-    private int viewCount;
-
     @Column(name = "created_date", nullable = false)
     @CreatedDate
     private LocalDateTime createdDate;
@@ -124,10 +121,6 @@ public class Article {
 
     public void addLikeCount(){
         this.likeCount++;
-    }
-
-    public void addViewCount(){
-        this.viewCount++;
     }
 
     public void subtractLikeCount(){
