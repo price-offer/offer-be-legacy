@@ -149,7 +149,7 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ArticleDetailResponse findById(Long articleId, LoginMember loginMember) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));
