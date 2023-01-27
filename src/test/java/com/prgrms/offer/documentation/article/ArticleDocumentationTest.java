@@ -53,7 +53,6 @@ public class ArticleDocumentationTest extends ApiDocumentationTest {
                                 .tradeArea("송파구 잠실동")
                                 .mainImageUrl("http://test.jpg")
                                 .likeCount(3)
-                                .viewCount(24)
                                 .createdDate(LocalDateTime.now())
                                 .modifiedDate(LocalDateTime.now())
                                 .build(), false
