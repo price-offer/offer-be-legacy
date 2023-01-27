@@ -53,8 +53,6 @@ public class ArticleDetailResponse {
 
         private Boolean isLiked;
 
-        private int viewCount;
-
     }
 
     @Builder

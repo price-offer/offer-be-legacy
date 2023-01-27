@@ -86,7 +86,6 @@ public class ArticleDocumentationTest extends ApiDocumentationTest {
                                 fieldWithPath("mainImageUrl").type(JsonFieldType.STRING).description("게시글 메인 이미지 URL"),
                                 fieldWithPath("likeCount").type(JsonFieldType.NUMBER)
                                         .description("이 게시글에 관심을 갖고 있는 사용자 수"),
-                                fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
                                 fieldWithPath("liked").type(JsonFieldType.BOOLEAN)
                                         .description("관심 게시글 여부(비로그인 사용자의 경우 항상 false)"),
                                 fieldWithPath("createdDate").type(JsonFieldType.STRING).attributes(getDateFormat())
