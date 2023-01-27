@@ -28,7 +28,6 @@ public class ArticleResponse {
     private final int price;
     private final String mainImageUrl;
     private final int likeCount;
-    private final int viewCount;
     private final boolean liked;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
@@ -63,7 +62,6 @@ public class ArticleResponse {
                 article.getPrice(),
                 article.getMainImageUrl(),
                 article.getLikeCount(),
-                article.getViewCount(),
                 liked,
                 article.getCreatedDate(),
                 article.getModifiedDate()
