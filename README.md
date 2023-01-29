@@ -9,8 +9,6 @@
 
 [![Sonar & Jacoco Analyze](https://github.com/price-offer/offer-be/actions/workflows/ci-analyze.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/ci-analyze.yml)
 
-[![Deploy to Dev Server](https://github.com/price-offer/offer-be/actions/workflows/deploy-dev.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/deploy-dev.yml)
-[![Deploy to Production Server](https://github.com/price-offer/offer-be/actions/workflows/deploy-prod.yml/badge.svg)](https://github.com/price-offer/offer-be/actions/workflows/deploy-prod.yml)
 </div>
 
 ---
@@ -41,24 +39,29 @@
 
 
 ## Tech Stack
-
+### Dev
 - Java 11
 - Spring Boot 2.5.6, Gradle 7.2
 - Spring Security 5.5.3
 - Spring Data JPA 2.5.6
-- Swagger 2.3
 - MySQL 8
-- AWS S3
-- GitHub Actions
-- Docker
-- SonarCloud, JaCoCo
-- Spring REST Docs
 - Junit5, Mockito
 
-## Architecture
+### Util
+- Swagger 2.3
+- AWS S3
+- Spring REST Docs
 
+### GitOps
+- Kubernetes
+- ArgoCD, Argo Rollout
+- Jenkins
+- GitHub Actions
+- Docker(Jib)
+- SonarCloud, JaCoCo
 
-![image](https://user-images.githubusercontent.com/63030569/146950936-8048e151-61ea-41e2-892d-471835a6a730.png)
+## GitOps Architecture
+![offer-gitops-architecture](https://user-images.githubusercontent.com/55920132/215336470-d2677778-ed48-46c1-b2ca-53a9ddfd2237.jpg)
 
 
 ## Database Model
