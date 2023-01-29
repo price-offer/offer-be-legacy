@@ -33,7 +33,7 @@ public class ViewCount {
         this.viewCount = 1L;
     }
 
-    public static ViewCount dd (Article article) {
+    public static ViewCount initiate (Article article) {
         return new ViewCount(article);
     }
 }
