@@ -13,12 +13,10 @@ import com.prgrms.offer.domain.article.model.dto.CodeAndNameInfosResponse;
 import com.prgrms.offer.domain.article.model.dto.ProductImageUrlsResponse;
 import com.prgrms.offer.domain.article.model.entity.Article;
 import com.prgrms.offer.domain.article.model.entity.ProductImage;
+import com.prgrms.offer.domain.article.model.entity.ViewCount;
 import com.prgrms.offer.domain.article.model.value.Category;
 import com.prgrms.offer.domain.article.model.value.TradeStatus;
-import com.prgrms.offer.domain.article.repository.ArticleRepository;
-import com.prgrms.offer.domain.article.repository.LikeArticleRepository;
-import com.prgrms.offer.domain.article.repository.ProductImageRepository;
-import com.prgrms.offer.domain.article.repository.TemporalArticle;
+import com.prgrms.offer.domain.article.repository.*;
 import com.prgrms.offer.domain.article.service.response.ArticleResponse;
 import com.prgrms.offer.domain.member.model.entity.Member;
 import com.prgrms.offer.domain.member.repository.MemberRepository;
@@ -51,6 +49,7 @@ public class ArticleService {
     private final MessageRoomRepository messageRoomRepository;
     private final ArticleConverter converter;
     private final ImageUploader s3ImageUploader;
+    private final ViewCountRepository viewCountRepository;
 
     private final PropertyProvider propertyProvider;
 
@@ -78,6 +77,7 @@ public class ArticleService {
         if (request.getId() == null || request.getId().longValue() == 0) { // 신규 생성일 경우
             Article article = converter.toEntity(request, writer);
             articleEntity = articleRepository.save(article);
+            viewCountRepository.save(ViewCount.initiate(article));
         } else {  // 수정일 경우
             articleEntity = articleRepository.findById(request.getId())
                     .orElseThrow(() -> new BusinessException(ResponseMessage.ARTICLE_NOT_FOUND));

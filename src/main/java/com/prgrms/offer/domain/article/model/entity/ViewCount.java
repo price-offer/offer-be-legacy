@@ -27,4 +27,13 @@ public class ViewCount {
     public void addViewCount(){
         this.viewCount++;
     }
+
+    private ViewCount(Article article) {
+        this.article = article;
+        this.viewCount = 1L;
+    }
+
+    public static ViewCount initiate (Article article) {
+        return new ViewCount(article);
+    }
 }
